@@ -32,3 +32,10 @@ temp/
 *.wav
 *.mp3
 *.m4a
+
+# Python
+.venv/
+venv/
+__pycache__/
+*.pyc
+*.pyo

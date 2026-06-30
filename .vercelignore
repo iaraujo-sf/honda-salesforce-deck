@@ -1,0 +1,6 @@
+docs/
+transcricoes/
+.venv/
+.git/
+*.md
+CLAUDE.md

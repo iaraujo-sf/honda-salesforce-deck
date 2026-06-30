@@ -4,7 +4,9 @@ Apresentação executiva da estratégia de modernização de dados Honda com Sal
 
 ## 🚀 Deploy
 
-Hospedado na Vercel: [URL será adicionada após deploy]
+**Produção**: https://honda-lovat-gamma.vercel.app
+
+Hospedado na Vercel com deploy automático do branch `main`.
 
 ## 📋 Estrutura do Projeto
 
