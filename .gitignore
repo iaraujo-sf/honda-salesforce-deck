@@ -27,3 +27,8 @@ build/
 tmp/
 temp/
 *.tmp
+
+# Large audio files
+*.wav
+*.mp3
+*.m4a
