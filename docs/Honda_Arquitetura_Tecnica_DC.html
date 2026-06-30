@@ -1,0 +1,1071 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc 3.10" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Honda - Análise Técnica e Arquitetural</title>
+  <style>
+    /* Default styles provided by pandoc.
+    ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+    */
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    svg {
+      height: auto;
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      white-space: pre-wrap;
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      border: none;
+      border-top: 1px solid #1a1a1a;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: 1.5em;}
+    div.column{flex: auto;}
+    @media screen {
+    div.columns{gap: min(4vw, 1.5em);}
+    div.column{overflow-x: auto;}
+    }
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+  <style>
+  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;max-width:900px;margin:0 auto;padding:40px;color:#1a1a1a;line-height:1.6;font-size:14px}
+  h1{color:#cc0000;border-bottom:3px solid #cc0000;padding-bottom:10px}
+  h2{color:#333;border-bottom:1px solid #ddd;padding-bottom:5px;margin-top:40px}
+  h3{color:#555;margin-top:25px}
+  table{border-collapse:collapse;width:100%;margin:15px 0}
+  th{background:#cc0000;color:#fff;padding:8px 12px;text-align:left}
+  td{border:1px solid #ddd;padding:6px 12px}
+  tr:nth-child(even){background:#f9f9f9}
+  code{background:#f4f4f4;padding:2px 5px;border-radius:3px;font-size:13px}
+  pre{background:#1e1e1e;color:#d4d4d4;padding:20px;border-radius:5px;overflow-x:auto;font-size:12px}
+  pre code{background:transparent;color:inherit}
+  blockquote{border-left:4px solid #cc0000;margin-left:0;padding-left:15px;color:#555}
+  hr{border:none;border-top:2px solid #cc0000;margin:40px 0}
+  @media print{body{max-width:100%;padding:20px}h2{page-break-before:auto}pre{font-size:10px;page-break-inside:avoid}}
+  </style>
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">Honda - Análise Técnica e Arquitetural</h1>
+</header>
+<h1 id="honda---análise-técnica-e-arquitetural">Honda - Análise Técnica
+e Arquitetural</h1>
+<h2 id="data-cloud-campanhas-e-estratégia-de-dados">Data Cloud,
+Campanhas e Estratégia de Dados</h2>
+<p><strong>Versão:</strong> 1.0<br />
+<strong>Data:</strong> 24/06/2026<br />
+<strong>Classificação:</strong> Interno Salesforce<br />
+<strong>Preparado para:</strong> Workshop Técnico Honda</p>
+<hr />
+<h2 id="situação-atual-ecossistema-de-dados-honda">1. Situação Atual —
+Ecossistema de Dados Honda</h2>
+<h3 id="visão-geral-da-arquitetura-atual">1.1 Visão Geral da Arquitetura
+Atual</h3>
+<p>A Honda opera um ecossistema de dados construído ao longo de 10+
+anos, com múltiplas camadas de integração e processamento. A arquitetura
+atual apresenta fragmentação entre sistemas legados e plataformas
+modernas.</p>
+<pre><code>┌─────────────────────────────────────────────────────────────────────────────┐
+│                        FONTES DE DADOS - CLIENTE HONDA                       │
+├────────────────────────────────┬────────────────────────────────────────────┤
+│       ONLINE (Digital)         │           OFFLINE (Transacional)            │
+│                                │                                            │
+│  • Web2Lead / Leads Connect    │  • DMS (Dealer Management System)          │
+│  • Portal do Proprietário      │  • Transações de vendas (2R/4R)            │
+│  • Redes Sociais Honda         │  • Serviços e pós-venda                    │
+│  • App Conecte (telemetria)    │  • Financeiro concessionárias              │
+│  • Formulários de interesse    │  • ~1.000 concessionárias conectadas       │
+└────────────────────┬───────────┴──────────────────────┬─────────────────────┘
+                     │                                   │
+                     ▼                                   ▼
+┌────────────────────────────┐    ┌──────────────────────────────────────────┐
+│     SALESFORCE CORE        │    │         DATA WAREHOUSE (LEGADO)           │
+│     (Sales Cloud)          │◄───│                                          │
+│                            │    │  • Staging area (recepção DMS)            │
+│  • Contas / Contatos       │    │  • Data Quality (higienização)            │
+│  • Oportunidades           │    │  • Deduplicação / Household               │
+│  • Cases                   │    │  • Geolocalização                        │
+│  • Partner Community       │    │  • Visão Única do Cliente                 │
+│    (Market One to One)     │    │  • Regras de acesso por dealer            │
+│                            │    │  • Batch processing (não real-time)       │
+└──────────┬─────────────────┘    └──────────────────────────────────────────┘
+           │                                    │
+           │  MC Connect (sync)                 │ (Em construção)
+           ▼                                    ▼
+┌──────────────────────────┐    ┌──────────────────────────────────────────┐
+│  MARKETING CLOUD         │    │           DATA LAKE (NOVO)                │
+│  ENGAGEMENT              │    │                                          │
+│                          │    │  • Migração gradual do DW                 │
+│  • 57M contatos          │    │  • Dados corporativos não-CRM            │
+│  • 392 jornadas (running)│    │  • Telemetria                            │
+│  • SQL queries (timeout) │    │  • Analytics avançado                    │
+│  • 9 BUs consolidadas    │    │                                          │
+│  • Campanhas montadora   │    └──────────────────────────────────────────┘
+│  • Campanhas dealers     │
+└──────────────────────────┘
+           │
+           ▼
+┌──────────────────────────┐
+│  DATA CLOUD              │
+│                          │
+│  • Motor de Propensão    │
+│  • SDK Web (navegação)   │
+│  • Modelo Hard Credit    │
+│  • Identity Resolution   │
+│    (parcial)             │
+└──────────────────────────┘
+           │
+           ▼
+┌──────────────────────────┐
+│  AGENT FORCE SDR         │
+│                          │
+│  • WhatsApp              │
+│  • Test Drive scheduling │
+│  • 24/7 (fora horário    │
+│    comercial + weekends) │
+│  • Produção desde 05/2026│
+└──────────────────────────┘</code></pre>
+<h3 id="volumetria-e-escala">1.2 Volumetria e Escala</h3>
+<table>
+<colgroup>
+<col style="width: 32%" />
+<col style="width: 25%" />
+<col style="width: 42%" />
+</colgroup>
+<thead>
+<tr>
+<th>Métrica</th>
+<th>Valor</th>
+<th>Observação</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Contatos Marketing Cloud</td>
+<td>57M</td>
+<td>Após deduplicação (era 113M em 2023)</td>
+</tr>
+<tr>
+<td>Concessionárias conectadas</td>
+<td>~1.000</td>
+<td>Impactadas por campanhas dealers</td>
+</tr>
+<tr>
+<td>Jornadas ativas (running)</td>
+<td>392</td>
+<td>Nem todas necessariamente em produção real</td>
+</tr>
+<tr>
+<td>BUs Marketing Cloud</td>
+<td>9</td>
+<td>Consolidadas de ~2.000 originais</td>
+</tr>
+<tr>
+<td>Canais ativos</td>
+<td>Email, SMS</td>
+<td>WhatsApp via Agent Force (limitado)</td>
+</tr>
+<tr>
+<td>Canais desejados</td>
+<td>WhatsApp, Push</td>
+<td>Para módulo de campanhas dealers</td>
+</tr>
+<tr>
+<td>Contrato Data Cloud</td>
+<td>Hard Credit</td>
+<td>Até 2030</td>
+</tr>
+<tr>
+<td>Modelo propensão</td>
+<td>Ativo</td>
+<td>Gera oportunidades para dealers</td>
+</tr>
+</tbody>
+</table>
+<h3 id="fluxo-de-dados-atual-caminho-crítico">1.3 Fluxo de Dados Atual —
+Caminho Crítico</h3>
+<pre><code>CONCESSIONÁRIA                 HONDA                          CLIENTE FINAL
+     │                           │                                │
+     │  DMS (venda/serviço)      │                                │
+     ├──────────────────────────►│                                │
+     │                           │                                │
+     │                    ┌──────┴──────┐                         │
+     │                    │     DW      │                         │
+     │                    │  (staging)  │                         │
+     │                    │  (quality)  │                         │
+     │                    │  (dedup)    │                         │
+     │                    └──────┬──────┘                         │
+     │                           │                                │
+     │                    ┌──────┴──────┐                         │
+     │                    │    CORE     │                         │
+     │                    │(Sales Cloud)│                         │
+     │                    └──┬──────┬───┘                         │
+     │                       │      │                             │
+     │              MC Connect│      │ Data Cloud                  │
+     │                       │      │                             │
+     │                 ┌─────┴┐  ┌──┴─────┐                      │
+     │                 │  MC  │  │   DC   │                       │
+     │                 │Engine│  │Propensão│                      │
+     │                 └──┬───┘  └────────┘                       │
+     │                    │                                       │
+     │                    │  Jornada/Campanha                     │
+     │                    ├──────────────────────────────────────►│
+     │                    │  (Email/SMS)                          │
+     │                                                            │
+     │  Partner Community                                         │
+     │  (Market One to One)                                       │
+     ├────────┐                                                   │
+     │        │ Segmentação SQL                                   │
+     │        │ (TIMEOUT!)                                        │
+     │        ▼                                                   │
+     │  ┌───────────┐                                             │
+     │  │MC Disparo │─────────────────────────────────────────────►
+     │  │(Email/SMS)│                                             │
+     │  └───────────┘                                             │</code></pre>
+<hr />
+<h2 id="diagnóstico-dos-problemas-técnicos">2. Diagnóstico dos Problemas
+Técnicos</h2>
+<h3 id="módulo-de-campanhas-market-one-to-one-prioridade-1">2.1 Módulo
+de Campanhas — Market One to One (PRIORIDADE #1)</h3>
+<p><strong>O que é:</strong> Customização desenvolvida há ~10 anos no
+Partner Community que simula um Distributed Marketing. Permite que
+concessionárias façam disparos segmentados de email e SMS via Marketing
+Cloud da montadora.</p>
+<p><strong>Fluxo técnico atual:</strong> 1. Dealer acessa Partner
+Community 2. Seleciona template de campanha 3. Sistema executa SQL
+queries para segmentação da base do dealer 4. Queries consultam dados
+sincronizados via MC Connect (Core → MC) 5. Resultados populam Data
+Extension 6. Disparo executado via Marketing Cloud Engagement</p>
+<p><strong>Problemas identificados:</strong></p>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 36%" />
+<col style="width: 30%" />
+</colgroup>
+<thead>
+<tr>
+<th>Problema</th>
+<th>Causa Raiz</th>
+<th>Impacto</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Timeout nas SQL queries</td>
+<td>Queries pesadas sobre 57M contatos; MC não é engine de processamento
+de dados</td>
+<td>Campanhas não executam; erro visível para dealer</td>
+</tr>
+<tr>
+<td>Duplicação de contatos</td>
+<td>Sem resolução de identidade entre canais (app, formulário,
+concessionária)</td>
+<td>Comunicações duplicadas; desperdício de budget</td>
+</tr>
+<tr>
+<td>Arquitetura obsoleta</td>
+<td>Construído há 10 anos; tecnologias evoluíram; customização pesada em
+Core</td>
+<td>Manutenção cara; dependência de pessoas-chave</td>
+</tr>
+<tr>
+<td>Limitação de canais</td>
+<td>Apenas Email e SMS</td>
+<td>Não atende demanda de WhatsApp e Push</td>
+</tr>
+<tr>
+<td>Escalabilidade</td>
+<td>~1.000 dealers executando queries simultâneas</td>
+<td>Degradação de performance em horários de pico</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Impacto financeiro:</strong> ~70% do volume financeiro do
+contrato Marketing Cloud está associado a este módulo.</p>
+<p><strong>Limitação crítica:</strong> O Distributed Marketing nativo da
+Salesforce <strong>não suporta WhatsApp nem Push</strong>. WhatsApp está
+em roadmap futuro (sem data firme) e Push não está no roadmap.</p>
+<h3 id="data-warehouse-gargalo-de-integração-prioridade-2">2.2 Data
+Warehouse — Gargalo de Integração (PRIORIDADE #2)</h3>
+<p><strong>Função atual do DW:</strong> - Recebe dados transacionais de
+~1.000 concessionárias via DMS - Aplica regras de Data Quality
+(higienização, padronização, deduplicação) - Executa regras de
+geolocalização e household - Consolida “Visão Única do Cliente” - Filtra
+e envia subconjunto relevante para Salesforce Core - Processamento em
+batch (não real-time)</p>
+<p><strong>Problemas:</strong> - Processamento batch gera latência na
+atualização dos dados de CRM - Equipe de CRM não tem acesso direto;
+depende de TI para qualquer consulta - Muitas regras legadas que podem
+não ser mais necessárias - Custo operacional de manutenção de
+infraestrutura - Não alimenta Data Cloud diretamente</p>
+<p><strong>Contexto importante:</strong> Honda já está construindo um
+Data Lake. O DW não será 100% migrado para Data Cloud — apenas a parte
+relevante para CRM/Marketing.</p>
+<h3 id="marketing-cloud-connect-sincronização">2.3 Marketing Cloud
+Connect — Sincronização</h3>
+<p><strong>Problema:</strong> Sincronização de objetos entre Core e MC
+apresenta falhas frequentes. Quando novas jornadas são criadas com novos
+objetos/dados, a sincronização frequentemente falha.</p>
+<p><strong>Impacto:</strong> Bloqueia a criação de novas jornadas
+baseadas em dados frescos (telemetria, novos formulários, etc.)</p>
+<h3 id="fragmentação-de-identidade">2.4 Fragmentação de Identidade</h3>
+<p><strong>Situação atual:</strong> - Cliente compra carro → gera
+registro via concessionária (ID-A) - Mesmo cliente baixa app Conecte →
+gera novo registro (ID-B) - Mesmo cliente preenche formulário de
+interesse → gera registro (ID-C) - IDs não se comunicam entre si</p>
+<p><strong>Consequências:</strong> - Comunicações duplicadas/triplicadas
+- Contexto perdido entre interações (ex: respondeu NPS via ID-A, mas
+recebe comunicação via ID-B sem esse contexto) - Impossibilidade de
+medir efetividade real de canal - Base inflada artificialmente (57M pode
+ser significativamente menor em indivíduos únicos)</p>
+<hr />
+<h2 id="arquitetura-proposta-visão-target">3. Arquitetura Proposta —
+Visão Target</h2>
+<h3 id="arquitetura-alvo-fase-completa">3.1 Arquitetura Alvo (Fase
+Completa)</h3>
+<pre><code>┌─────────────────────────────────────────────────────────────────────────────┐
+│                           FONTES DE DADOS                                    │
+├──────────────────────────────┬──────────────────────────────────────────────┤
+│     DIGITAL                  │        TRANSACIONAL                           │
+│                              │                                              │
+│  • SDK Data Cloud (Web)      │  • DMS (via Data Lake ou direta)             │
+│  • App Conecte (telemetria)  │  • Integrações concessionárias              │
+│  • Formulários              │  • Dados de vendas/serviço                   │
+│  • Redes Sociais            │                                              │
+└──────────────┬───────────────┴─────────────────────┬────────────────────────┘
+               │                                      │
+               │         ┌────────────────────┐       │
+               │         │    DATA LAKE        │       │
+               │         │  (dados não-CRM,    │◄──────┘
+               │         │   analytics,        │
+               │         │   telemetria full)   │
+               │         └─────────┬────────────┘
+               │                   │ (subset CRM)
+               ▼                   ▼
+┌──────────────────────────────────────────────────────────────────────────────┐
+│                         DATA CLOUD (HUB CENTRAL)                             │
+│                                                                              │
+│  ┌─────────────┐  ┌──────────────┐  ┌─────────────┐  ┌─────────────────┐   │
+│  │  Ingestão   │  │  Modelagem   │  │  Identity   │  │  Segmentação    │   │
+│  │  (Streams)  │→ │  (DMO/DLO)   │→ │  Resolution │→ │  (Drag &amp; Drop)  │   │
+│  │             │  │              │  │  (Rulesets) │  │  (+ Einstein)   │   │
+│  └─────────────┘  └──────────────┘  └─────────────┘  └────────┬────────┘   │
+│                                                                 │            │
+│  ┌─────────────┐  ┌──────────────┐  ┌─────────────┐           │            │
+│  │  Propensão  │  │  Calculated  │  │  Activation │◄──────────┘            │
+│  │  (ML Model) │  │  Insights    │  │  Targets    │                        │
+│  └─────────────┘  └──────────────┘  └──────┬──────┘                        │
+│                                             │                                │
+└─────────────────────────────────────────────┼────────────────────────────────┘
+                                              │
+              ┌───────────────────────────────┼────────────────────┐
+              │                               │                    │
+              ▼                               ▼                    ▼
+┌──────────────────────┐  ┌─────────────────────────┐  ┌────────────────────┐
+│  MARKETING CLOUD     │  │  MARKETING CLOUD NEXT   │  │   AGENT FORCE      │
+│  ENGAGEMENT          │  │  (Novos Use Cases)      │  │                    │
+│                      │  │                         │  │  • SDR (WhatsApp)  │
+│  • Jornadas legadas  │  │  • Personalização AI    │  │  • Service Agent   │
+│  • Campanhas dealers │  │  • Novos canais         │  │  • 24/7            │
+│  • Email / SMS       │  │  • Mensuração avançada  │  │                    │
+└──────────────────────┘  └─────────────────────────┘  └────────────────────┘
+              │
+              │  (Activation do Data Cloud alimenta entrada)
+              │
+┌─────────────┴───────────────────────────────────────────────────────────────┐
+│                      CANAIS DE COMUNICAÇÃO                                    │
+│                                                                              │
+│    📧 Email    📱 SMS    💬 WhatsApp    🔔 Push    🤖 Agent (conversacional) │
+│                                                                              │
+└──────────────────────────────────────────────────────────────────────────────┘</code></pre>
+<h3 id="data-cloud-como-hub-componentes-técnicos">3.2 Data Cloud como
+Hub — Componentes Técnicos</h3>
+<h4 id="data-streams-ingestão">Data Streams (Ingestão)</h4>
+<table>
+<colgroup>
+<col style="width: 14%" />
+<col style="width: 28%" />
+<col style="width: 24%" />
+<col style="width: 34%" />
+</colgroup>
+<thead>
+<tr>
+<th>Fonte</th>
+<th>Tipo Conector</th>
+<th>Frequência</th>
+<th>Volume Estimado</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Salesforce Core</td>
+<td>CRM Connector (nativo)</td>
+<td>Real-time</td>
+<td>Objetos padrão + custom</td>
+</tr>
+<tr>
+<td>Website Honda</td>
+<td>Web SDK (já ativo)</td>
+<td>Real-time</td>
+<td>Navegação + formulários</td>
+</tr>
+<tr>
+<td>App Conecte</td>
+<td>Mobile SDK / API</td>
+<td>Real-time</td>
+<td>Telemetria + eventos</td>
+</tr>
+<tr>
+<td>Data Lake</td>
+<td>Cloud Storage Connector</td>
+<td>Batch/Scheduled</td>
+<td>Subset CRM do DW</td>
+</tr>
+<tr>
+<td>DMS (futuro)</td>
+<td>API / MuleSoft</td>
+<td>Near real-time</td>
+<td>Transações dealers</td>
+</tr>
+</tbody>
+</table>
+<h4 id="data-model-objects-dmo-modelo-proposto">Data Model Objects (DMO)
+— Modelo Proposto</h4>
+<pre><code>┌──────────────────┐     ┌──────────────────┐     ┌──────────────────┐
+│   Individual     │     │    Vehicle       │     │   Dealership     │
+│                  │     │                  │     │                  │
+│  • Name          │     │  • Model         │     │  • Dealer Code   │
+│  • Email         │◄───►│  • Year          │◄───►│  • Region        │
+│  • Phone         │     │  • VIN           │     │  • Group         │
+│  • Address       │     │  • Purchase Date │     │  • Channels      │
+│  • App ID        │     │  • Service Hist  │     │                  │
+│  • Source        │     │  • Telemetry     │     │                  │
+└────────┬─────────┘     └──────────────────┘     └──────────────────┘
+         │
+         │  1:N
+         ▼
+┌──────────────────┐     ┌──────────────────┐
+│  Engagement      │     │  Propensity      │
+│                  │     │                  │
+│  • Channel       │     │  • Model Score   │
+│  • Timestamp     │     │  • Category      │
+│  • Campaign ID   │     │  • Confidence    │
+│  • Response      │     │  • Calc Date     │
+│  • Dealer Ref    │     │  • Target Model  │
+└──────────────────┘     └──────────────────┘</code></pre>
+<h4 id="identity-resolution-regras-propostas">Identity Resolution —
+Regras Propostas</h4>
+<table>
+<thead>
+<tr>
+<th>Ruleset</th>
+<th>Match Criteria</th>
+<th>Confiança</th>
+<th>Cenário</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Rule 1</td>
+<td>CPF (exato)</td>
+<td>Alta</td>
+<td>Match determinístico direto</td>
+</tr>
+<tr>
+<td>Rule 2</td>
+<td>Email + Nome (fuzzy)</td>
+<td>Alta</td>
+<td>Cadastros sem CPF</td>
+</tr>
+<tr>
+<td>Rule 3</td>
+<td>Phone + Nome (fuzzy)</td>
+<td>Média</td>
+<td>App + Concessionária</td>
+</tr>
+<tr>
+<td>Rule 4</td>
+<td>Email + Endereço (parcial)</td>
+<td>Média</td>
+<td>Formulários web</td>
+</tr>
+<tr>
+<td>Rule 5</td>
+<td>VIN + Dealer Code</td>
+<td>Alta</td>
+<td>Veículo como âncora</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Resultado esperado:</strong> Redução significativa da base de
+57M para número real de indivíduos únicos. Estimativa conservadora:
+30-40% de redução por unificação.</p>
+<h3 id="solução-para-módulo-de-campanhas-opções-técnicas">3.3 Solução
+para Módulo de Campanhas — Opções Técnicas</h3>
+<h4 id="opção-a-data-cloud-políticas-de-acesso-data-spaces">Opção A:
+Data Cloud + Políticas de Acesso (Data Spaces)</h4>
+<pre><code>┌─────────────────────────────────────────────────────────┐
+│                    DATA CLOUD                             │
+│                                                         │
+│  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐    │
+│  │ Data Space  │  │ Data Space  │  │ Data Space  │    │
+│  │  Dealer A   │  │  Dealer B   │  │  Dealer C   │    │
+│  │             │  │             │  │             │    │
+│  │ Subset:     │  │ Subset:     │  │ Subset:     │    │
+│  │ Clientes    │  │ Clientes    │  │ Clientes    │    │
+│  │ região A    │  │ região B    │  │ região C    │    │
+│  └──────┬──────┘  └──────┬──────┘  └──────┬──────┘    │
+│         │                 │                 │           │
+│         └────────────┬────┴────────────────┘           │
+│                      ▼                                  │
+│         ┌────────────────────────┐                     │
+│         │  Segmentation Engine   │                     │
+│         │  (per dealer context)  │                     │
+│         └───────────┬────────────┘                     │
+│                     │                                   │
+└─────────────────────┼───────────────────────────────────┘
+                      │ Activation Target
+                      ▼
+┌─────────────────────────────────────────────────────────┐
+│  MC ENGAGEMENT (Disparo coordenado pela montadora)       │
+│  → Email, SMS, WhatsApp (via Journey), Push (via MC)    │
+└─────────────────────────────────────────────────────────┘</code></pre>
+<p><strong>Prós:</strong> - Segmentação nativa do Data Cloud (drag &amp;
+drop, sem SQL) - Elimina timeouts de queries - Escalável para 1.000+
+dealers - Resolução de identidade unificada - Permite canais adicionais
+via activation targets</p>
+<p><strong>Contras:</strong> - Consumo de créditos significativo (1.000
+dealers segmentando) - Complexidade de provisionar Data Spaces por
+dealer - Precisa validar viabilidade com equipe técnica DC (Zerba) -
+Modelo Hard Credit pode limitar</p>
+<p><strong>Consumo estimado:</strong> Necessita análise com base em
+volumetria real por dealer.</p>
+<h4 id="opção-b-agent-force-para-segmentação-mc-para-disparo">Opção B:
+Agent Force para Segmentação + MC para Disparo</h4>
+<pre><code>┌─────────────────────────────────────────────────────────┐
+│  PARTNER COMMUNITY (Modernizado)                         │
+│                                                         │
+│  Dealer acessa → Interface de campanha                  │
+│       │                                                 │
+│       ▼                                                 │
+│  ┌──────────────────────────────────┐                   │
+│  │  AGENT (Einstein/AgentForce)     │                   │
+│  │                                  │                   │
+│  │  &quot;Quero enviar campanha de       │                   │
+│  │   revisão para clientes que      │                   │
+│  │   compraram há 6 meses&quot;          │                   │
+│  │                                  │                   │
+│  │  → Agent consulta Data Cloud     │                   │
+│  │  → Gera segmento automaticamente │                   │
+│  │  → Apresenta preview ao dealer   │                   │
+│  │  → Dealer aprova e dispara       │                   │
+│  └──────────────┬───────────────────┘                   │
+│                 │                                        │
+└─────────────────┼────────────────────────────────────────┘
+                  │
+                  ▼
+┌─────────────────────────────────────────────────────────┐
+│  DATA CLOUD → Segmentação → Activation → MC Disparo     │
+└─────────────────────────────────────────────────────────┘</code></pre>
+<p><strong>Prós:</strong> - UX moderna e intuitiva para dealer - Elimina
+complexidade de SQL - Segmentação guiada por AI - Dealer não precisa
+conhecer estrutura de dados - Experiência conversacional (Honda já usa
+Agent Force)</p>
+<p><strong>Contras:</strong> - Desenvolvimento custom necessário -
+Maturidade do Agent Force para este use case - Governança: garantir que
+dealer não acesse dados de outro - Ainda depende de MC para disparo
+multicanal</p>
+<h4 id="opção-c-híbrida-recomendada-para-fase-1">Opção C: Híbrida
+(Recomendada para Fase 1)</h4>
+<pre><code>FASE 1 (Quick Win - 3 meses):
+├── Data Cloud assume segmentação das jornadas montadora
+├── Resolve timeouts (SQL eliminado)
+├── Identity Resolution ativada
+└── Módulo dealers: mantém fluxo atual com fix pontual nos timeouts
+
+FASE 2 (6 meses):
+├── Piloto módulo dealers com 5-10 concessionárias
+├── Segmentação via Data Cloud com políticas de acesso
+├── Novos canais (WhatsApp) via Journey trigger
+└── Validação de consumo de créditos
+
+FASE 3 (12 meses):
+├── Rollout para todas concessionárias
+├── Agent Force como interface de segmentação para dealers
+├── Eliminação do módulo legado Partner Community
+├── Integração DMS → Data Cloud (bypass DW para dados CRM)
+└── Marketing Cloud Next para use cases avançados</code></pre>
+<hr />
+<h2 id="análise-de-integração-dw-vs-data-cloud">4. Análise de Integração
+— DW vs Data Cloud</h2>
+<h3 id="mapeamento-de-capacidades">4.1 Mapeamento de Capacidades</h3>
+<table>
+<colgroup>
+<col style="width: 24%" />
+<col style="width: 35%" />
+<col style="width: 20%" />
+<col style="width: 19%" />
+</colgroup>
+<thead>
+<tr>
+<th>Capacidade DW</th>
+<th>Data Cloud Equivalente</th>
+<th>Viabilidade</th>
+<th>Observação</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Recepção DMS (staging)</td>
+<td>Data Streams (Ingestion API)</td>
+<td>Alta</td>
+<td>Conector API ou file-based</td>
+</tr>
+<tr>
+<td>Data Quality (higienização)</td>
+<td>Data Prep / Formulas / Transforms</td>
+<td>Média</td>
+<td>Nem todas as regras têm equivalente</td>
+</tr>
+<tr>
+<td>Deduplicação</td>
+<td>Identity Resolution (Rulesets)</td>
+<td>Alta</td>
+<td>Potencialmente superior ao DW</td>
+</tr>
+<tr>
+<td>Geolocalização</td>
+<td>Calculated Insights / Formulas</td>
+<td>Média</td>
+<td>Depende da complexidade atual</td>
+</tr>
+<tr>
+<td>Household rules</td>
+<td>Identity Resolution (Household)</td>
+<td>Alta</td>
+<td>Feature nativa do DC</td>
+</tr>
+<tr>
+<td>Visão Única Cliente</td>
+<td>Unified Profile</td>
+<td>Alta</td>
+<td>Core capability do DC</td>
+</tr>
+<tr>
+<td>Filtro para Core</td>
+<td>Data Actions / CRM Writeback</td>
+<td>Alta</td>
+<td>Bi-direcional com Core</td>
+</tr>
+<tr>
+<td>Batch processing</td>
+<td>Streaming + Scheduled Segments</td>
+<td>Alta</td>
+<td>Ganho: real-time vs batch</td>
+</tr>
+<tr>
+<td>Regras de acesso dealer</td>
+<td>Data Spaces / Permission Sets</td>
+<td>Média</td>
+<td>Precisa validar escala</td>
+</tr>
+</tbody>
+</table>
+<h3 id="o-que-não-migra-para-data-cloud">4.2 O Que NÃO Migra para Data
+Cloud</h3>
+<ul>
+<li>Dados corporativos não-CRM (financeiro, fiscal, operacional)</li>
+<li>Analytics pesado (BI, dashboards operacionais)</li>
+<li>Integrações com sistemas não-Salesforce que não são de CRM</li>
+<li>Histórico completo transacional (volume vs custo de créditos)</li>
+</ul>
+<p><strong>Destino:</strong> Data Lake (já em construção pela Honda)</p>
+<h3 id="modelo-de-transição">4.3 Modelo de Transição</h3>
+<pre><code>ESTADO ATUAL:
+  DMS → DW (todas as regras) → Core → MC
+
+ESTADO INTERMEDIÁRIO (Fase 1-2):
+  DMS → DW → Core → Data Cloud (via CRM Connector) → Segmentação → MC
+  DMS → DW → Data Lake (dados não-CRM)
+
+ESTADO ALVO (Fase 3):
+  DMS → Data Cloud (dados CRM) → Core (writeback seletivo) → MC/Next/Agent
+  DMS → Data Lake (dados não-CRM, analytics)
+  DW: DESCOMISSIONADO</code></pre>
+<hr />
+<h2 id="consumo-e-licenciamento">5. Consumo e Licenciamento</h2>
+<h3 id="situação-contratual-atual">5.1 Situação Contratual Atual</h3>
+<table>
+<thead>
+<tr>
+<th>Item</th>
+<th>Detalhe</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Data Cloud</td>
+<td>Hard Credit até 2030</td>
+</tr>
+<tr>
+<td>Contrato 1 (MC?)</td>
+<td>Expira setembro/2026 — créditos já consumidos</td>
+</tr>
+<tr>
+<td>Contrato 2</td>
+<td>Expira 31/janeiro/2027</td>
+</tr>
+<tr>
+<td>Agent Force</td>
+<td>Flex Credit (separado do DC)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="cenários-de-consumo-data-cloud">5.2 Cenários de Consumo Data
+Cloud</h3>
+<p><strong>Cenário conservador (apenas montadora):</strong> -
+Segmentação de jornadas internas - Identity Resolution sobre base
+unificada - Activation para MC Engagement - <strong>Impacto:</strong>
+Dentro do envelope atual (Hard Credit)</p>
+<p><strong>Cenário expandido (montadora + dealers):</strong> - Tudo
+acima + - Data Spaces por dealer (ou cluster de dealers) - Segmentação
+por dealer - Activation multicanal - <strong>Impacto:</strong>
+Possivelmente excede envelope atual → necessário upgrade ou modelo
+ilimitado</p>
+<h3 id="estratégia-comercial">5.3 Estratégia Comercial</h3>
+<p><strong>Objetivo pós-Dreamforce (setembro/2026):</strong> Negociar
+contrato consolidado e expandido, possivelmente modelo ilimitado (Data
+Cloud + Agent Force + MC), com fechamento em janeiro/2027 (alinhado com
+expiração do contrato 2).</p>
+<hr />
+<h2 id="riscos-e-mitigações">6. Riscos e Mitigações</h2>
+<table>
+<colgroup>
+<col style="width: 17%" />
+<col style="width: 34%" />
+<col style="width: 21%" />
+<col style="width: 26%" />
+</colgroup>
+<thead>
+<tr>
+<th>Risco</th>
+<th>Probabilidade</th>
+<th>Impacto</th>
+<th>Mitigação</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Data Cloud não resolve timeouts de dealers</td>
+<td>Baixa</td>
+<td>Alto</td>
+<td>POC com subset antes de rollout</td>
+</tr>
+<tr>
+<td>Consumo de créditos explode com dealers</td>
+<td>Média</td>
+<td>Alto</td>
+<td>Piloto com 5-10 dealers; medir antes de expandir</td>
+</tr>
+<tr>
+<td>Complexidade de regras DW não replicável</td>
+<td>Média</td>
+<td>Médio</td>
+<td>Mapear regras; aceitar que algumas ficam no Lake</td>
+</tr>
+<tr>
+<td>Honda perde paciência com mais promessas</td>
+<td>Alta</td>
+<td>Alto</td>
+<td>Quick wins visíveis em 30-60 dias</td>
+</tr>
+<tr>
+<td>Gentrop não consegue executar parte Core</td>
+<td>Alta</td>
+<td>Médio</td>
+<td>Avaliar se Salesforce assume ou outro parceiro</td>
+</tr>
+<tr>
+<td>Marketing Cloud Next não está pronto</td>
+<td>Média</td>
+<td>Baixo</td>
+<td>Manter como piloto secundário; não é entregável principal</td>
+</tr>
+<tr>
+<td>Arquiteto indisponível</td>
+<td>Alta</td>
+<td>Médio</td>
+<td>Escalar via deal estratégico; envolver Galvão/Mitocid</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="perguntas-chave-para-workshop-2506">7. Perguntas-Chave para
+Workshop (25/06)</h2>
+<h3 id="para-guilherme-ti-dw">Para Guilherme (TI — DW):</h3>
+<ol type="1">
+<li>Quais integrações DMS → DW existem? Protocolos (API, file,
+SFTP)?</li>
+<li>Qual a frequência de atualização dos dados? Diária? Horária?</li>
+<li>Quantas regras de Data Quality estão ativas? Documentação
+existe?</li>
+<li>Quais dados do DW vão para o Core hoje? Todos ou subset?</li>
+<li>O Data Lake já recebe dados do DMS diretamente ou só do DW?</li>
+<li>Qual tecnologia do DW? (SQL Server, Oracle, Teradata?)</li>
+<li>Volume diário de registros novos/atualizados?</li>
+<li>Regras de geolocalização e household: são críticas para CRM ou para
+outros usos?</li>
+</ol>
+<h3 id="para-alisson-crm-módulo-campanhas">Para Alisson (CRM — Módulo
+Campanhas):</h3>
+<ol type="1">
+<li>Demonstração completa do fluxo: dealer seleciona → segmenta →
+dispara</li>
+<li>Em que ponto exatamente ocorre o timeout? Na query de
+segmentação?</li>
+<li>Quantos dealers usam ativamente o módulo por mês?</li>
+<li>Volume médio de disparos por dealer/mês?</li>
+<li>Que dados o dealer usa para segmentar? (modelo, ano compra, região,
+etc.)</li>
+<li>Dealer personaliza conteúdo ou usa templates fixos?</li>
+<li>Existem regras de governança? (ex: não mais que X disparos/mês por
+cliente)</li>
+<li>WhatsApp e Push: qual o use case desejado? Mesmo fluxo ou novo?</li>
+<li>Quais são os erros mais frequentes além de timeout?</li>
+<li>O módulo depende de objetos custom no Core? Quais?</li>
+</ol>
+<h3 id="para-ambos">Para Ambos:</h3>
+<ol type="1">
+<li>Quando um cliente troca de concessionária, como isso se reflete nos
+dados?</li>
+<li>Base por dealer: como é definida? Geolocalização? Última compra?
+Manual?</li>
+<li>Existe sobreposição de base entre dealers? Conflitos de
+ownership?</li>
+</ol>
+<hr />
+<h2 id="roadmap-proposto-sujeito-a-validação-no-workshop">8. Roadmap
+Proposto (Sujeito a Validação no Workshop)</h2>
+<pre><code>JUL 2026          AGO 2026          SET 2026          OUT-DEZ 2026       JAN 2027
+    │                 │                 │                  │                 │
+    ▼                 ▼                 ▼                  ▼                 ▼
+┌────────┐      ┌────────┐      ┌────────────┐     ┌──────────┐     ┌──────────┐
+│MAPEAR  │      │FASE 1  │      │DREAMFORCE  │     │FASE 2    │     │CONTRATO  │
+│        │      │EXECUÇÃO│      │            │     │          │     │          │
+│• DW    │      │        │      │• Demo DC   │     │• Piloto  │     │• Fecho   │
+│  deep  │      │• Seg.  │      │  em ação   │     │  dealers │     │  contrato│
+│  dive  │      │  MC→DC │      │• ROI       │     │  (5-10)  │     │  ilimit. │
+│• Módulo│      │  (mont)│      │  projetado │     │• WhatsApp│     │• Escopo  │
+│  camp. │      │• ID    │      │• Visão     │     │  canal   │     │  2027    │
+│• Arch. │      │  Resol.│      │  estratég. │     │• Agent   │     │          │
+│  design│      │• Quick │      │            │     │  Force   │     │          │
+│        │      │  Win   │      │            │     │  POC     │     │          │
+└────────┘      └────────┘      └────────────┘     └──────────┘     └──────────┘</code></pre>
+<hr />
+<h2 id="anexo-comparativo-de-performance-case-referência">9. Anexo —
+Comparativo de Performance (Case Referência)</h2>
+<p>Dados compartilhados de cliente do setor farmacêutico (~3M contatos,
+múltiplas orgs) que migrou segmentação para Data Cloud:</p>
+<table style="width:100%;">
+<colgroup>
+<col style="width: 15%" />
+<col style="width: 29%" />
+<col style="width: 36%" />
+<col style="width: 17%" />
+</colgroup>
+<thead>
+<tr>
+<th>Métrica</th>
+<th>Antes (MC Only)</th>
+<th style="text-align: right;">Depois (Data Cloud)</th>
+<th>Melhoria</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Tempo de segmentação</td>
+<td>45-60 min</td>
+<td style="text-align: right;">2-5 min</td>
+<td>~90%</td>
+</tr>
+<tr>
+<td>Taxa de erro (governança)</td>
+<td>12%</td>
+<td style="text-align: right;">&lt;1%</td>
+<td>~95%</td>
+</tr>
+<tr>
+<td>Tempo atualização dados</td>
+<td>24h (batch)</td>
+<td style="text-align: right;">Near real-time</td>
+<td>Significativa</td>
+</tr>
+<tr>
+<td>Dependência TI para segmentos</td>
+<td>100%</td>
+<td style="text-align: right;">20%</td>
+<td>80% redução</td>
+</tr>
+<tr>
+<td>Tempo ativação campanha</td>
+<td>4-6h</td>
+<td style="text-align: right;">30 min</td>
+<td>~90%</td>
+</tr>
+</tbody>
+</table>
+<p><em>Nota: Resultados variam por implementação. Honda tem escala
+significativamente maior (57M vs 3M).</em></p>
+<hr />
+<p><strong>Documento preparado por equipe Salesforce para uso interno.
+Conteúdo baseado em reuniões de 09/06/2026 e 15/06/2026.</strong></p>
+</body>
+</html>

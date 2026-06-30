@@ -1,0 +1,122 @@
+flowchart TB
+    %% ========================================
+    %% DATA SOURCES LAYER
+    %% ========================================
+    subgraph SOURCES["<b>DATA SOURCES</b>"]
+        direction LR
+
+        subgraph DEALERS["<b>DEALERS 2w/4w</b>"]
+            D1["• Clientes<br/>• Pedidos<br/>• Ordens Serviço<br/>• Test-Drive<br/>• Agendamentos"]
+        end
+
+        subgraph VENDAS["<b>VENDAS ESPECIAIS</b>"]
+            V1["• Clientes<br/>• Pedidos"]
+        end
+
+        subgraph HSF["<b>HSF</b>"]
+            H1["• Dealers<br/>• Fluxo Conv.<br/>• Clientes<br/>• Pedidos<br/>• Ordens"]
+        end
+    end
+
+    %% ========================================
+    %% ORCHESTRATION LAYER
+    %% ========================================
+    subgraph ESB["<b>ESB / MuleSoft (Orquestração)</b>"]
+        E1["• Mantém protocolos legados<br/>• XML-SOAP<br/>• WSO2<br/>• JSON-REST"]
+    end
+
+    %% ========================================
+    %% DATA CLOUD - CENTRAL HUB
+    %% ========================================
+    subgraph DC["<b>DATA CLOUD - HUB CENTRAL</b>"]
+        direction TB
+
+        subgraph STREAMS["<b>Data Streams (Ingestão)</b>"]
+            DS1["• Real-time<br/>• Batch"]
+        end
+
+        subgraph DQ["<b>Data Quality</b>"]
+            DQ1["• Higienize<br/>• Padronize<br/>• Geoloc.<br/>• Transform"]
+        end
+
+        subgraph IR["<b>Identity Resolution</b>"]
+            IR1["• VUC (regras DW)<br/>• Household<br/>• Pessoa Física"]
+        end
+
+        subgraph UP["<b>UNIFIED PROFILE</b><br/>(substitui VUC do DW)"]
+            UP1["• E-mail<br/>• Endereço<br/>• Telefone<br/>• Documento<br/>• Test-Drive<br/>• Relação Posse<br/>• Venda Balcão<br/>• Ordem Serviço<br/>• Atendimento<br/>• Agendamentos<br/>• Pedido Venda<br/>• Garagem<br/>• Dealers<br/>• Chassis"]
+        end
+
+        subgraph SEG["<b>Segmentação</b><br/>(substitui SQL queries do MC)"]
+            SEG1["• Drag & drop (sem código)<br/>• Calculated Insights<br/>• Einstein Scoring"]
+        end
+
+        STREAMS --> DQ
+        DQ --> IR
+        IR --> UP
+        UP --> SEG
+    end
+
+    %% ========================================
+    %% DESTINATIONS LAYER
+    %% ========================================
+    subgraph DEST["<b>DESTINATIONS</b>"]
+        direction LR
+
+        subgraph ACT["<b>ACTIVATION TARGETS</b>"]
+            A1["<b>Canais:</b><br/>• MC Email<br/>• MC SMS<br/>• WhatsApp<br/>• Push<br/>• Agent Force"]
+            A2["<i>(Direto, sem passar Core)</i>"]
+            A1 ~~~ A2
+        end
+
+        subgraph WB["<b>CRM WRITEBACK (Seletivo)</b>"]
+            W1["<b>→ Core recebe só:</b><br/>• Oportunidades<br/>• Cases<br/>• Accounts core"]
+            W2["<i>(Não carrega tudo!)</i>"]
+            W1 ~~~ W2
+        end
+
+        subgraph DL["<b>DATA LAKE (Databricks)</b>"]
+            DL1["• Histórico full<br/>• Analytics<br/>• BI (Qlik)<br/>• Dados corp.<br/>• ML/AI"]
+        end
+    end
+
+    %% ========================================
+    %% CORE LAYER
+    %% ========================================
+    subgraph CORE["<b>SALESFORCE CORE (Transacional)</b>"]
+        C1["<b>Operação leve:</b><br/>• Oportunidades<br/>• Cases<br/>• Accounts mínimo"]
+        C2["<i>(Leve, sem VUC)</i>"]
+        C1 ~~~ C2
+    end
+
+    %% ========================================
+    %% MAIN FLOWS
+    %% ========================================
+    DEALERS --> ESB
+    VENDAS --> ESB
+    HSF --> ESB
+
+    ESB ==> DC
+
+    DC ==> ACT
+    DC ==> WB
+    DC ==> DL
+
+    WB --> CORE
+
+    %% ========================================
+    %% STYLING
+    %% ========================================
+    classDef sourceStyle fill:#E3F2FD,stroke:#1976D2,stroke-width:2px,color:#000
+    classDef orchestrationStyle fill:#FFF3E0,stroke:#F57C00,stroke-width:2px,color:#000
+    classDef dcStyle fill:#C8E6C9,stroke:#388E3C,stroke-width:3px,color:#000
+    classDef dcInternalStyle fill:#E8F5E9,stroke:#4CAF50,stroke-width:2px,color:#000
+    classDef destStyle fill:#FFE0B2,stroke:#E64A19,stroke-width:2px,color:#000
+    classDef coreStyle fill:#F3E5F5,stroke:#7B1FA2,stroke-width:2px,color:#000
+
+    class SOURCES,DEALERS,VENDAS,HSF,D1,V1,H1 sourceStyle
+    class ESB,E1 orchestrationStyle
+    class DC dcStyle
+    class STREAMS,DQ,IR,UP,SEG,DS1,DQ1,IR1,UP1,SEG1 dcInternalStyle
+    class DEST,ACT,WB,DL,A1,A2,W1,W2,DL1 destStyle
+    class CORE,C1,C2 coreStyle

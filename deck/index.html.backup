@@ -1,0 +1,1837 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Honda × Salesforce — Data Cloud Hub Strategy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    /* Honda Brand Colors */
+    --honda-red: #CC0000;
+    --honda-red-dark: #990000;
+    --honda-red-light: #E31837;
+    --honda-silver: #C0C0C0;
+    --honda-silver-light: #E0E0E0;
+    --honda-gray: #3A3A3A;
+    --honda-black: #1A1A1A;
+
+    /* Salesforce Product Colors */
+    --data-cloud: #9333EA;
+    --data-cloud-light: #A855F7;
+    --data-cloud-dark: #7C3AED;
+    --marketing-cloud: #FF5C35;
+    --marketing-cloud-light: #FF7A5C;
+    --sales-cloud: #00A1E0;
+    --sales-cloud-light: #33B5E8;
+    --mulesoft: #00A0DF;
+    --databricks: #FF3621;
+    --agent-force: #00D4B8;
+
+    /* Neutrals */
+    --white: #FFFFFF;
+    --black: #0A0A0A;
+    --gray-dark: #1A1A1A;
+    --gray-mid: #2A2A2A;
+    --gray-light: #F5F5F5;
+    --gray-border: rgba(0,0,0,0.08);
+
+    /* Salesforce Shadow System */
+    --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.08);
+    --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.12);
+    --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.16);
+    --shadow-xl: 0 12px 32px rgba(0, 0, 0, 0.2);
+    --shadow-glow-red: 0 0 20px rgba(204, 0, 0, 0.15);
+    --shadow-glow-purple: 0 0 20px rgba(147, 51, 234, 0.15);
+
+    /* Spacing System */
+    --space-xs: 8px;
+    --space-sm: 16px;
+    --space-md: 24px;
+    --space-lg: 32px;
+    --space-xl: 48px;
+    --space-2xl: 64px;
+    --space-3xl: 96px;
+
+    /* Radius System */
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
+    --radius-xl: 24px;
+    --radius-full: 9999px;
+
+    /* Easing (Spring Physics) */
+    --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+    --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+    --ease-out: cubic-bezier(0.33, 1, 0.68, 1);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  @font-face {
+    font-family: 'Salesforce Sans';
+    src: local('Inter'), local('system-ui');
+    font-display: swap;
+  }
+
+  html, body {
+    height: 100%; overflow: hidden;
+    background: var(--white);
+    font-family: 'Salesforce Sans', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    color: var(--black);
+    cursor: none;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* ===================== FROSTED GLASS ===================== */
+  .glass {
+    background: rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+  }
+
+  .glass-light {
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+  }
+
+  .glass-dark {
+    background: rgba(26, 26, 26, 0.6);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  /* ===================== LOGO SALESFORCE ===================== */
+  #sf-logo {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    z-index: 200;
+    width: 90px;
+    height: auto;
+    pointer-events: none;
+    opacity: 0.9;
+  }
+  #sf-logo img {
+    width: 100%;
+    height: auto;
+    display: block;
+    filter: drop-shadow(0 1px 4px rgba(0, 0, 0, 0.1));
+  }
+
+  /* ===================== CURSOR ===================== */
+  .cursor {
+    width: 12px; height: 12px;
+    background: var(--honda-red);
+    border-radius: 50%;
+    position: fixed; top: 0; left: 0;
+    pointer-events: none; z-index: 9999;
+    transition: width 0.3s var(--ease-spring), height 0.3s var(--ease-spring), background 0.3s;
+    box-shadow: var(--shadow-glow-red);
+    will-change: left, top, transform;
+  }
+  .cursor.big {
+    width: 48px; height: 48px;
+    background: rgba(204, 0, 0, 0.08);
+    border: 2px solid rgba(204, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+  }
+
+  /* ===================== SPARKLES ===================== */
+  .sparkle {
+    position: absolute;
+    pointer-events: none;
+    z-index: 1;
+    opacity: 0.8;
+    animation: float 6s ease-in-out infinite;
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-20px) rotate(5deg); }
+  }
+
+  .sparkle.red {
+    filter: drop-shadow(0 0 8px rgba(204, 0, 0, 0.4));
+  }
+
+  .sparkle.silver {
+    filter: drop-shadow(0 0 8px rgba(192, 192, 192, 0.6));
+  }
+
+  /* ===================== DECK STRUCTURE ===================== */
+  #deck {
+    width: 100vw; height: 100dvh;
+    position: relative; overflow: hidden;
+  }
+
+  .slide {
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.8s var(--ease-smooth), transform 0.8s var(--ease-out);
+    transform: translateY(40px) scale(0.98);
+    will-change: transform, opacity;
+  }
+  .slide.active {
+    opacity: 1; pointer-events: all;
+    transform: translateY(0) scale(1);
+  }
+
+  /* ===================== PROGRESS & NAVIGATION ===================== */
+  #progress {
+    position: fixed; top: 0; left: 0; height: 3px;
+    background: linear-gradient(90deg, var(--honda-red), var(--honda-silver), var(--data-cloud));
+    background-size: 200% 100%;
+    animation: progressShimmer 4s linear infinite;
+    z-index: 100;
+    transition: width 0.8s var(--ease-smooth);
+    box-shadow: var(--shadow-glow-red);
+  }
+  @keyframes progressShimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+  }
+
+  #counter {
+    position: fixed; bottom: 32px; right: 40px;
+    font-size: 11px; letter-spacing: 3px;
+    color: rgba(0, 0, 0, 0.3);
+    z-index: 100;
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .nav-btn {
+    position: fixed; top: 50%; transform: translateY(-50%);
+    width: 52px; height: 52px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    z-index: 100;
+    transition: transform 0.4s var(--ease-spring), opacity 0.3s;
+    opacity: 0.5;
+  }
+  .nav-btn:hover {
+    opacity: 1;
+    transform: translateY(-50%) scale(1.15);
+  }
+  #nav-prev { left: 24px; }
+  #nav-next { right: 24px; }
+
+  .nav-btn .glass-light {
+    width: 100%; height: 100%;
+    border-radius: var(--radius-full);
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.3s var(--ease-spring);
+  }
+  .nav-btn:hover .glass-light {
+    background: rgba(204, 0, 0, 0.08);
+    border-color: rgba(204, 0, 0, 0.3);
+    box-shadow: var(--shadow-md), var(--shadow-glow-red);
+  }
+  .nav-btn svg { width: 24px; height: 24px; fill: var(--black); transition: fill 0.3s; }
+  .nav-btn:hover svg { fill: var(--honda-red); }
+
+  #dot-nav {
+    position: fixed; bottom: 32px; left: 50%; transform: translateX(-50%);
+    display: flex; gap: 10px; z-index: 100;
+    padding: 10px 20px;
+    border-radius: var(--radius-full);
+  }
+  #dot-nav .glass-light {
+    padding: 10px 20px;
+    border-radius: var(--radius-full);
+    display: flex;
+    gap: 10px;
+    box-shadow: var(--shadow-sm);
+  }
+  .dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: rgba(0, 0, 0, 0.15);
+    transition: all 0.4s var(--ease-spring);
+    cursor: pointer;
+  }
+  .dot:hover { background: rgba(204, 0, 0, 0.4); }
+  .dot.active {
+    background: var(--honda-red);
+    width: 28px; border-radius: 3px;
+    box-shadow: var(--shadow-glow-red);
+  }
+
+  /* ===================== SLIDE 1 — CAPA ===================== */
+  .s1-bg {
+    position: absolute; inset: 0;
+    background: linear-gradient(135deg, #1A1A1A 0%, #0A0A0A 100%);
+  }
+  .s1-content {
+    position: relative; z-index: 2;
+    text-align: center;
+    max-width: 1200px;
+    padding: var(--space-3xl) var(--space-2xl) var(--space-2xl);
+  }
+  .s1-logo {
+    font-size: clamp(48px, 8vw, 80px);
+    font-weight: 900;
+    letter-spacing: -3px;
+    color: var(--honda-red);
+    margin-bottom: var(--space-md);
+    text-transform: uppercase;
+    text-shadow: 0 4px 20px rgba(204, 0, 0, 0.4);
+  }
+  .s1-subtitle {
+    font-size: clamp(24px, 4vw, 36px);
+    font-weight: 300;
+    color: var(--honda-silver);
+    margin-bottom: var(--space-xl);
+    letter-spacing: 3px;
+  }
+  .s1-title {
+    font-size: clamp(32px, 5vw, 64px);
+    font-weight: 700;
+    color: var(--white);
+    line-height: 1.15;
+    margin-bottom: var(--space-lg);
+  }
+  .s1-meta {
+    font-size: clamp(11px, 1.5vw, 13px);
+    color: rgba(255, 255, 255, 0.5);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    font-weight: 400;
+  }
+
+  /* ===================== SLIDE 2 — SITUAÇÃO ===================== */
+  .s2-bg {
+    position: absolute; inset: 0;
+    background: var(--white);
+  }
+  .s2-content {
+    position: relative; z-index: 2;
+    max-width: 1500px;
+    padding: var(--space-3xl) var(--space-2xl) var(--space-2xl);
+    width: 100%;
+    overflow-y: auto;
+    max-height: 100vh;
+  }
+  .s2-header {
+    text-align: center;
+    margin-bottom: var(--space-2xl);
+  }
+  .s2-title {
+    font-size: clamp(32px, 5vw, 56px);
+    font-weight: 800;
+    color: var(--black);
+    margin-bottom: var(--space-sm);
+    letter-spacing: -1px;
+  }
+  .s2-subtitle {
+    font-size: clamp(14px, 2vw, 18px);
+    color: rgba(0, 0, 0, 0.5);
+    font-weight: 400;
+  }
+  .s2-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-md);
+  }
+  .s2-card {
+    background: linear-gradient(135deg, #FAFAFA 0%, #FFFFFF 100%);
+    border: 1px solid var(--gray-border);
+    border-radius: var(--radius-lg);
+    padding: var(--space-xl);
+    transition: all 0.4s var(--ease-spring);
+    position: relative;
+    overflow: hidden;
+  }
+  .s2-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 4px; height: 100%;
+    background: var(--honda-red);
+    transform: scaleY(0);
+    transition: transform 0.4s var(--ease-spring);
+  }
+  .s2-card:hover {
+    transform: translateY(-6px);
+    box-shadow: var(--shadow-lg);
+    border-color: rgba(204, 0, 0, 0.2);
+  }
+  .s2-card:hover::before {
+    transform: scaleY(1);
+  }
+  .s2-card-label {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--honda-red);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-bottom: var(--space-sm);
+  }
+  .s2-card-value {
+    font-size: 56px;
+    font-weight: 800;
+    color: var(--black);
+    margin-bottom: var(--space-xs);
+    line-height: 1;
+  }
+  .s2-card-desc {
+    font-size: 14px;
+    color: rgba(0, 0, 0, 0.6);
+    line-height: 1.6;
+  }
+
+  /* ===================== SLIDE 3 — PROBLEMAS ===================== */
+  .s3-bg {
+    position: absolute; inset: 0;
+    background: linear-gradient(135deg, #1A1A1A 0%, #2A2A2A 100%);
+  }
+  .s3-content {
+    position: relative; z-index: 2;
+    max-width: 1500px;
+    padding: var(--space-3xl) var(--space-2xl) var(--space-2xl);
+    width: 100%;
+    overflow-y: auto;
+    max-height: 100vh;
+  }
+  .s3-header {
+    text-align: center;
+    margin-bottom: var(--space-2xl);
+  }
+  .s3-title {
+    font-size: clamp(32px, 5vw, 56px);
+    font-weight: 800;
+    color: var(--white);
+    margin-bottom: var(--space-sm);
+    letter-spacing: -1px;
+  }
+  .s3-subtitle {
+    font-size: clamp(14px, 2vw, 18px);
+    color: rgba(255, 255, 255, 0.6);
+  }
+  .s3-problems {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-md);
+  }
+  .s3-problem {
+    border-radius: var(--radius-lg);
+    padding: var(--space-xl);
+    transition: all 0.4s var(--ease-spring);
+    position: relative;
+  }
+  .s3-problem .glass {
+    position: absolute;
+    inset: 0;
+    border-radius: var(--radius-lg);
+  }
+  .s3-problem > * {
+    position: relative;
+    z-index: 1;
+  }
+  .s3-problem:hover {
+    transform: translateY(-6px);
+  }
+  .s3-problem:hover .glass {
+    background: rgba(255, 255, 255, 0.15);
+    box-shadow: var(--shadow-lg);
+  }
+  .s3-problem-icon {
+    width: 56px; height: 56px;
+    background: var(--honda-red);
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: var(--space-md);
+    font-size: 28px;
+    box-shadow: var(--shadow-glow-red);
+  }
+  .s3-problem-title {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--white);
+    margin-bottom: var(--space-sm);
+  }
+  .s3-problem-desc {
+    font-size: 15px;
+    color: rgba(255, 255, 255, 0.75);
+    line-height: 1.7;
+  }
+
+  /* ===================== SLIDE 4 — ARQUITETURA ===================== */
+  .s4-bg {
+    position: absolute; inset: 0;
+    background: linear-gradient(135deg, #F8F8F8 0%, #FFFFFF 100%);
+  }
+  .s4-content {
+    position: relative; z-index: 2;
+    max-width: 1600px;
+    padding: var(--space-2xl) var(--space-lg);
+    width: 100%;
+    overflow-y: auto;
+    max-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+  .s4-header {
+    text-align: center;
+    margin-bottom: var(--space-md);
+    flex-shrink: 0;
+  }
+  .s4-title {
+    font-size: clamp(28px, 4vw, 42px);
+    font-weight: 800;
+    color: var(--black);
+    margin-bottom: var(--space-xs);
+    letter-spacing: -1px;
+  }
+  .s4-subtitle {
+    font-size: clamp(12px, 1.6vw, 15px);
+    color: rgba(0, 0, 0, 0.6);
+    font-weight: 400;
+  }
+
+  /* Architecture Split Layout */
+  .arch-split {
+    display: flex;
+    gap: var(--space-md);
+    align-items: stretch;
+    flex: 1;
+    min-height: 0;
+  }
+
+  /* Explainer Sidebar */
+  .arch-explainer {
+    width: 280px;
+    min-width: 280px;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    overflow-y: auto;
+  }
+  .arch-explainer-title {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--honda-red);
+    margin-bottom: var(--space-sm);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .arch-explainer-stage {
+    padding: var(--space-sm) var(--space-md);
+    border-left: 4px solid transparent;
+    margin-bottom: 2px;
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+    transition: background 0.2s;
+    cursor: pointer;
+  }
+  .arch-explainer-stage:hover {
+    background: rgba(204, 0, 0, 0.04);
+  }
+  .arch-explainer-stage-num {
+    font-size: 9px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin-bottom: 4px;
+  }
+  .arch-explainer-stage-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--black);
+    margin-bottom: 4px;
+  }
+  .arch-explainer-stage-desc {
+    font-size: 11px;
+    color: rgba(0, 0, 0, 0.65);
+    line-height: 1.5;
+  }
+  .arch-explainer-stage-desc strong {
+    color: var(--black);
+    font-weight: 600;
+  }
+
+  /* Stage Colors */
+  .arch-explainer-sources { border-left-color: #706E6B; }
+  .arch-explainer-sources .arch-explainer-stage-num { color: #706E6B; }
+  .arch-explainer-esb { border-left-color: var(--mulesoft); }
+  .arch-explainer-esb .arch-explainer-stage-num { color: var(--mulesoft); }
+  .arch-explainer-hub { border-left-color: var(--data-cloud); }
+  .arch-explainer-hub .arch-explainer-stage-num { color: var(--data-cloud); }
+  .arch-explainer-activation { border-left-color: var(--marketing-cloud); }
+  .arch-explainer-activation .arch-explainer-stage-num { color: var(--marketing-cloud); }
+  .arch-explainer-core { border-left-color: var(--sales-cloud); }
+  .arch-explainer-core .arch-explainer-stage-num { color: var(--sales-cloud); }
+
+  .arch-explainer-quote {
+    margin-top: auto;
+    padding: var(--space-md);
+    background: var(--honda-red);
+    border-radius: var(--radius-md);
+    color: var(--white);
+    font-size: 11px;
+    line-height: 1.5;
+    font-style: italic;
+    text-align: center;
+  }
+
+  /* Diagram Container */
+  .arch-diagram-container {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Architecture Diagram Card */
+  .arch-diagram {
+    width: 100%;
+    height: 100%;
+    background: var(--white);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: var(--shadow-lg);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .arch-diagram-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: var(--space-md) var(--space-lg);
+    background: var(--white);
+    border-bottom: 1px solid var(--gray-border);
+    flex-shrink: 0;
+  }
+
+  .arch-diagram-header-left {
+    max-width: 60%;
+  }
+
+  .arch-diagram-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--honda-red);
+    margin-bottom: 6px;
+  }
+
+  .arch-diagram-desc {
+    font-size: 11px;
+    color: rgba(0, 0, 0, 0.6);
+    line-height: 1.4;
+  }
+
+  .arch-diagram-legend {
+    background: #F8F8F8;
+    border-radius: var(--radius-sm);
+    padding: var(--space-sm) var(--space-md);
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-xs) var(--space-md);
+  }
+
+  .arch-legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 9px;
+    color: rgba(0, 0, 0, 0.7);
+    white-space: nowrap;
+  }
+
+  .arch-legend-icon {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .arch-diagram-body {
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+    flex: 1;
+    min-height: 0;
+    overflow: auto;
+  }
+
+  /* Architecture Layers */
+  .arch-flow {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    width: 100%;
+    flex: 1;
+    min-height: 0;
+  }
+
+  .arch-layer {
+    display: flex;
+    align-items: stretch;
+    flex: 1;
+    min-height: 0;
+    border-bottom: 1px solid var(--gray-border);
+    transition: background 0.2s;
+  }
+
+  .arch-layer:last-child {
+    border-bottom: none;
+  }
+
+  .arch-layer:hover {
+    background: rgba(0, 0, 0, 0.01);
+  }
+
+  .arch-layer-label {
+    min-width: 100px;
+    width: 100px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: var(--space-sm);
+    color: var(--white);
+    font-size: 10px;
+    font-weight: 700;
+    line-height: 1.3;
+    text-align: center;
+    flex-shrink: 0;
+  }
+
+  .arch-layer-label span {
+    font-size: 8px;
+    font-weight: 400;
+    opacity: 0.85;
+    margin-top: 4px;
+    display: block;
+  }
+
+  .arch-layer-content {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    padding: var(--space-sm) var(--space-md);
+    flex-wrap: wrap;
+    min-height: 0;
+  }
+
+  /* Layer-specific colors */
+  .arch-layer-sources .arch-layer-label {
+    background: #706E6B;
+  }
+
+  .arch-layer-esb .arch-layer-label {
+    background: var(--mulesoft);
+  }
+
+  .arch-layer-hub .arch-layer-label {
+    background: var(--data-cloud);
+  }
+
+  .arch-layer-activation .arch-layer-label {
+    background: linear-gradient(135deg, var(--marketing-cloud) 0%, #FF7A5C 100%);
+  }
+
+  .arch-layer-core .arch-layer-label {
+    background: var(--sales-cloud);
+  }
+
+  /* Architecture Components */
+  .arch-component {
+    border: 1px solid var(--gray-border);
+    border-radius: var(--radius-sm);
+    padding: 8px 12px;
+    background: var(--white);
+    min-width: 110px;
+    transition: all 0.3s var(--ease-spring);
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .arch-component:hover {
+    box-shadow: var(--shadow-sm);
+    transform: translateY(-2px);
+  }
+
+  .arch-component-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .arch-component-icon {
+    width: 18px;
+    height: 18px;
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+
+  .arch-component-name {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--black);
+    line-height: 1.3;
+  }
+
+  .arch-component-features {
+    font-size: 9px;
+    color: rgba(0, 0, 0, 0.6);
+    line-height: 1.4;
+    padding-left: 26px;
+  }
+
+  /* Special component for Data Cloud Hub */
+  .arch-component-hub {
+    flex: 1;
+    border: 2px solid var(--data-cloud);
+    background: linear-gradient(135deg, #F3EBFF 0%, #E8DBFF 100%);
+    padding: var(--space-md);
+  }
+
+  .arch-component-hub .arch-component-name {
+    font-size: 13px;
+    color: var(--data-cloud);
+  }
+
+  .arch-hub-stages {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 6px;
+    margin-top: var(--space-sm);
+  }
+
+  .arch-hub-stage {
+    background: rgba(255, 255, 255, 0.7);
+    border: 1px solid rgba(147, 51, 234, 0.2);
+    border-radius: 6px;
+    padding: 6px;
+    text-align: center;
+    transition: all 0.2s;
+  }
+
+  .arch-hub-stage:hover {
+    background: rgba(255, 255, 255, 0.9);
+    transform: translateY(-2px);
+  }
+
+  .arch-hub-stage-num {
+    font-size: 8px;
+    font-weight: 700;
+    color: var(--data-cloud);
+    margin-bottom: 2px;
+  }
+
+  .arch-hub-stage-title {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--black);
+    margin-bottom: 2px;
+  }
+
+  .arch-hub-stage-desc {
+    font-size: 8px;
+    color: rgba(0, 0, 0, 0.6);
+    line-height: 1.3;
+  }
+
+  /* Responsive adjustments for architecture */
+  @media (max-width: 1200px) {
+    .arch-split {
+      flex-direction: column;
+    }
+    .arch-explainer {
+      width: 100%;
+      max-width: 100%;
+      flex-direction: row;
+      flex-wrap: wrap;
+      gap: var(--space-xs);
+    }
+    .arch-explainer-stage {
+      flex: 1;
+      min-width: 200px;
+    }
+    .arch-explainer-quote {
+      width: 100%;
+    }
+    .arch-hub-stages {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  @media (max-width: 768px) {
+    .arch-explainer {
+      flex-direction: column;
+    }
+    .arch-explainer-stage {
+      width: 100%;
+    }
+    .arch-layer {
+      flex-direction: column;
+    }
+    .arch-layer-label {
+      width: 100%;
+    }
+    .arch-hub-stages {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* ===================== SLIDE 5 — ROADMAP ===================== */
+  .s5-bg {
+    position: absolute; inset: 0;
+    background: linear-gradient(135deg, #0A0A0A 0%, #1A1A1A 100%);
+  }
+  .s5-content {
+    position: relative; z-index: 2;
+    max-width: 1700px;
+    padding: var(--space-3xl) var(--space-md) var(--space-md);
+    width: 100%;
+    overflow-y: auto;
+    max-height: 100vh;
+  }
+  .s5-header {
+    text-align: center;
+    margin-bottom: var(--space-lg);
+  }
+  .s5-title {
+    font-size: clamp(32px, 5vw, 56px);
+    font-weight: 800;
+    color: var(--white);
+    margin-bottom: var(--space-sm);
+    letter-spacing: -1px;
+  }
+  .s5-subtitle {
+    font-size: clamp(14px, 2vw, 18px);
+    color: rgba(255, 255, 255, 0.6);
+  }
+  .s5-timeline {
+    display: flex;
+    gap: var(--space-sm);
+    overflow-x: auto;
+    padding-bottom: var(--space-md);
+    scrollbar-width: thin;
+    scrollbar-color: rgba(204, 0, 0, 0.5) rgba(255, 255, 255, 0.1);
+  }
+  .s5-timeline::-webkit-scrollbar {
+    height: 6px;
+  }
+  .s5-timeline::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 3px;
+  }
+  .s5-timeline::-webkit-scrollbar-thumb {
+    background: rgba(204, 0, 0, 0.5);
+    border-radius: 3px;
+  }
+  .s5-phase {
+    min-width: clamp(240px, 30vw, 280px);
+    border-radius: var(--radius-lg);
+    padding: var(--space-md);
+    transition: all 0.4s var(--ease-spring);
+    position: relative;
+  }
+  .s5-phase .glass {
+    position: absolute;
+    inset: 0;
+    border-radius: var(--radius-lg);
+  }
+  .s5-phase > * {
+    position: relative;
+    z-index: 1;
+  }
+  .s5-phase:hover {
+    transform: translateY(-8px);
+  }
+  .s5-phase:hover .glass {
+    background: rgba(255,255,255,0.15);
+    box-shadow: var(--shadow-lg);
+  }
+  .s5-phase-number {
+    display: inline-block;
+    background: var(--honda-red);
+    color: var(--white);
+    font-size: 12px;
+    font-weight: 700;
+    padding: 6px 14px;
+    border-radius: var(--radius-full);
+    margin-bottom: var(--space-sm);
+    box-shadow: var(--shadow-glow-red);
+  }
+  .s5-phase-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--white);
+    margin-bottom: var(--space-xs);
+  }
+  .s5-phase-duration {
+    font-size: 12px;
+    color: var(--honda-silver);
+    margin-bottom: var(--space-md);
+    font-weight: 500;
+  }
+  .s5-phase-items {
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.75);
+    line-height: 1.9;
+  }
+
+  /* ===================== SLIDE 6 — BENEFÍCIOS ===================== */
+  .s6-bg {
+    position: absolute; inset: 0;
+    background: var(--white);
+  }
+  .s6-content {
+    position: relative; z-index: 2;
+    max-width: 1500px;
+    padding: var(--space-3xl) var(--space-2xl) var(--space-2xl);
+    width: 100%;
+    overflow-y: auto;
+    max-height: 100vh;
+  }
+  .s6-header {
+    text-align: center;
+    margin-bottom: var(--space-2xl);
+  }
+  .s6-title {
+    font-size: clamp(32px, 5vw, 56px);
+    font-weight: 800;
+    color: var(--black);
+    margin-bottom: var(--space-sm);
+    letter-spacing: -1px;
+  }
+  .s6-subtitle {
+    font-size: clamp(14px, 2vw, 18px);
+    color: rgba(0, 0, 0, 0.5);
+  }
+  .s6-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--space-md);
+  }
+  .s6-benefit {
+    background: linear-gradient(135deg, #FAFAFA 0%, #FFFFFF 100%);
+    border: 1px solid var(--gray-border);
+    border-radius: var(--radius-lg);
+    padding: var(--space-lg);
+    text-align: center;
+    transition: all 0.4s var(--ease-spring);
+    position: relative;
+    overflow: hidden;
+  }
+  .s6-benefit::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 4px;
+    background: var(--honda-red);
+    transform: scaleX(0);
+    transition: transform 0.4s var(--ease-spring);
+  }
+  .s6-benefit:hover {
+    transform: translateY(-8px);
+    box-shadow: var(--shadow-lg);
+    border-color: rgba(204, 0, 0, 0.2);
+  }
+  .s6-benefit:hover::before {
+    transform: scaleX(1);
+  }
+  .s6-benefit-value {
+    font-size: 42px;
+    font-weight: 800;
+    color: var(--honda-red);
+    margin-bottom: var(--space-xs);
+    line-height: 1;
+  }
+  .s6-benefit-label {
+    font-size: 14px;
+    color: rgba(0, 0, 0, 0.7);
+    line-height: 1.6;
+  }
+
+  /* ===================== SLIDE 7 — PRÓXIMOS PASSOS ===================== */
+  .s7-bg {
+    position: absolute; inset: 0;
+    background: linear-gradient(135deg, #CC0000 0%, #990000 100%);
+  }
+  .s7-content {
+    position: relative; z-index: 2;
+    max-width: 1300px;
+    padding: var(--space-3xl) var(--space-2xl) var(--space-2xl);
+    text-align: center;
+    width: 100%;
+    overflow-y: auto;
+    max-height: 100vh;
+  }
+  .s7-title {
+    font-size: clamp(36px, 6vw, 64px);
+    font-weight: 800;
+    color: var(--white);
+    margin-bottom: var(--space-2xl);
+    letter-spacing: -1px;
+    text-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  }
+  .s7-steps {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-md);
+    margin-bottom: var(--space-3xl);
+  }
+  .s7-step {
+    border-radius: var(--radius-lg);
+    padding: var(--space-xl);
+    text-align: left;
+    transition: all 0.4s var(--ease-spring);
+    position: relative;
+  }
+  .s7-step .glass {
+    position: absolute;
+    inset: 0;
+    border-radius: var(--radius-lg);
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.2);
+  }
+  .s7-step > * {
+    position: relative;
+    z-index: 1;
+  }
+  .s7-step:hover {
+    transform: translateY(-6px);
+  }
+  .s7-step:hover .glass {
+    background: rgba(255,255,255,0.15);
+    box-shadow: var(--shadow-lg);
+  }
+  .s7-step-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--white);
+    margin-bottom: var(--space-sm);
+  }
+  .s7-step-desc {
+    font-size: 15px;
+    color: rgba(255, 255, 255, 0.85);
+    line-height: 1.7;
+  }
+  .s7-cta {
+    font-size: 18px;
+    color: rgba(255, 255, 255, 0.9);
+    font-weight: 400;
+  }
+
+  /* ===================== RESPONSIVE ===================== */
+  @media (max-width: 1200px) {
+    #sf-logo {
+      width: 80px;
+      top: 16px;
+      left: 16px;
+    }
+  }
+
+  @media (max-width: 1024px) {
+    .s2-grid, .s6-grid { grid-template-columns: repeat(2, 1fr); }
+    .s3-problems { grid-template-columns: 1fr; }
+    .arch-hub-stages { grid-template-columns: repeat(2, 1fr); }
+    .arch-layer { gap: var(--space-xs); }
+    .s2-content, .s3-content, .s4-content, .s5-content, .s6-content, .s7-content {
+      padding: var(--space-2xl) var(--space-md) var(--space-md);
+    }
+  }
+
+  @media (max-width: 768px) {
+    #sf-logo {
+      width: 70px;
+      top: 12px;
+      left: 12px;
+    }
+    .s2-grid, .s3-problems, .s6-grid, .s7-steps { grid-template-columns: 1fr; }
+    .s5-timeline { flex-direction: column; }
+    .s5-phase { min-width: 100%; }
+    .arch-layer { flex-direction: column; align-items: center; }
+    .arch-hub-stages { grid-template-columns: 1fr; }
+    .arch-box { min-width: 100%; }
+    .s2-content, .s3-content, .s4-content, .s5-content, .s6-content, .s7-content {
+      padding: var(--space-2xl) var(--space-sm) var(--space-sm);
+    }
+    .s2-header, .s3-header, .s4-header, .s5-header, .s6-header {
+      margin-bottom: var(--space-md);
+    }
+    .sparkle {
+      display: none;
+    }
+    #counter {
+      bottom: 20px;
+      right: 20px;
+      font-size: 9px;
+    }
+    #dot-nav {
+      bottom: 20px;
+    }
+    .nav-btn {
+      width: 40px;
+      height: 40px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    #sf-logo {
+      width: 60px;
+    }
+  }
+
+  /* ===================== REDUCED MOTION ===================== */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+    .sparkle { animation: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="cursor"></div>
+<div id="progress"></div>
+<div id="counter">01 / 07</div>
+
+<!-- LOGO SALESFORCE -->
+<div id="sf-logo">
+  <img src="salesforce-logo.webp" alt="Salesforce">
+</div>
+
+<div id="dot-nav">
+  <div class="glass-light">
+    <div class="dot active" data-slide="0"></div>
+    <div class="dot" data-slide="1"></div>
+    <div class="dot" data-slide="2"></div>
+    <div class="dot" data-slide="3"></div>
+    <div class="dot" data-slide="4"></div>
+    <div class="dot" data-slide="5"></div>
+    <div class="dot" data-slide="6"></div>
+  </div>
+</div>
+
+<div id="nav-prev" class="nav-btn">
+  <div class="glass-light">
+    <svg viewBox="0 0 24 24"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
+  </div>
+</div>
+<div id="nav-next" class="nav-btn">
+  <div class="glass-light">
+    <svg viewBox="0 0 24 24"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
+  </div>
+</div>
+
+<div id="deck">
+
+  <!-- SLIDE 1: CAPA -->
+  <div class="slide active">
+    <div class="s1-bg"></div>
+    <!-- Sparkles -->
+    <svg class="sparkle red" style="left: 5%; top: 15%; width: 48px; height: 48px; animation-delay: 0s;" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M12 0l2.4 9.6L24 12l-9.6 2.4L12 24l-2.4-9.6L0 12l9.6-2.4L12 0z" fill="#CC0000"/>
+    </svg>
+    <svg class="sparkle silver" style="right: 8%; top: 20%; width: 36px; height: 36px; animation-delay: 1s;" viewBox="0 0 24 24">
+      <path d="M12 0l2.4 9.6L24 12l-9.6 2.4L12 24l-2.4-9.6L0 12l9.6-2.4L12 0z" fill="#C0C0C0"/>
+    </svg>
+    <svg class="sparkle red" style="left: 10%; bottom: 25%; width: 32px; height: 32px; animation-delay: 2s;" viewBox="0 0 24 24">
+      <path d="M12 0l2.4 9.6L24 12l-9.6 2.4L12 24l-2.4-9.6L0 12l9.6-2.4L12 0z" fill="#CC0000"/>
+    </svg>
+    <svg class="sparkle silver" style="right: 7%; bottom: 30%; width: 44px; height: 44px; animation-delay: 1.5s;" viewBox="0 0 24 24">
+      <path d="M12 0l2.4 9.6L24 12l-9.6 2.4L12 24l-2.4-9.6L0 12l9.6-2.4L12 0z" fill="#C0C0C0"/>
+    </svg>
+    <div class="s1-content">
+      <div class="s1-logo">HONDA</div>
+      <div class="s1-subtitle">× SALESFORCE</div>
+      <h1 class="s1-title">Enterprise Architecture POV<br>Substituição do DW por Data Cloud</h1>
+      <div class="s1-meta">Versão 3.0 • 30 Junho 2026 • Interno Salesforce</div>
+    </div>
+  </div>
+
+  <!-- SLIDE 2: SITUAÇÃO ATUAL -->
+  <div class="slide">
+    <div class="s2-bg"></div>
+    <!-- Sparkles -->
+    <svg class="sparkle red" style="left: 4%; top: 12%; width: 40px; height: 40px; animation-delay: 0.5s;" viewBox="0 0 24 24">
+      <path d="M12 0l2.4 9.6L24 12l-9.6 2.4L12 24l-2.4-9.6L0 12l9.6-2.4L12 0z" fill="#CC0000"/>
+    </svg>
+    <svg class="sparkle silver" style="right: 6%; top: 18%; width: 34px; height: 34px; animation-delay: 1.2s;" viewBox="0 0 24 24">
+      <path d="M12 0l2.4 9.6L24 12l-9.6 2.4L12 24l-2.4-9.6L0 12l9.6-2.4L12 0z" fill="#E0E0E0"/>
+    </svg>
+    <div class="s2-content">
+      <div class="s2-header">
+        <h2 class="s2-title">Situação Atual</h2>
+        <p class="s2-subtitle">Ecossistema de Dados Honda — Volumetria e Escala</p>
+      </div>
+      <div class="s2-grid">
+        <div class="s2-card">
+          <div class="s2-card-label">Contatos</div>
+          <div class="s2-card-value">63M</div>
+          <div class="s2-card-desc">Base Marketing Cloud consolidada após deduplicação</div>
+        </div>
+        <div class="s2-card">
+          <div class="s2-card-label">Concessionárias</div>
+          <div class="s2-card-value">~1.000</div>
+          <div class="s2-card-desc">Dealers conectados via DMS com campanhas ativas</div>
+        </div>
+        <div class="s2-card">
+          <div class="s2-card-label">Jornadas</div>
+          <div class="s2-card-value">392</div>
+          <div class="s2-card-desc">Jornadas ativas em Marketing Cloud</div>
+        </div>
+        <div class="s2-card">
+          <div class="s2-card-label">Objetos Core</div>
+          <div class="s2-card-value">350+</div>
+          <div class="s2-card-desc">Sincronizados (195% acima do limite MC Connect de 180)</div>
+        </div>
+        <div class="s2-card">
+          <div class="s2-card-label">Entidades VUC</div>
+          <div class="s2-card-value">13+</div>
+          <div class="s2-card-desc">Conectadas no DW (Email, Telefone, Documento, Test-Drive, Posse, etc.)</div>
+        </div>
+        <div class="s2-card">
+          <div class="s2-card-label">Data Lake</div>
+          <div class="s2-card-value">Produção</div>
+          <div class="s2-card-desc">Databricks já operacional (confirmado 25/06)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 3: PROBLEMAS CRÍTICOS -->
+  <div class="slide">
+    <div class="s3-bg"></div>
+    <!-- Sparkles -->
+    <svg class="sparkle silver" style="left: 5%; top: 15%; width: 42px; height: 42px; animation-delay: 0.3s;" viewBox="0 0 24 24">
+      <path d="M12 0l2.4 9.6L24 12l-9.6 2.4L12 24l-2.4-9.6L0 12l9.6-2.4L12 0z" fill="#C0C0C0"/>
+    </svg>
+    <svg class="sparkle red" style="right: 7%; top: 22%; width: 38px; height: 38px; animation-delay: 1.4s;" viewBox="0 0 24 24">
+      <path d="M12 0l2.4 9.6L24 12l-9.6 2.4L12 24l-2.4-9.6L0 12l9.6-2.4L12 0z" fill="#CC0000"/>
+    </svg>
+    <svg class="sparkle silver" style="left: 8%; bottom: 20%; width: 36px; height: 36px; animation-delay: 2.1s;" viewBox="0 0 24 24">
+      <path d="M12 0l2.4 9.6L24 12l-9.6 2.4L12 24l-2.4-9.6L0 12l9.6-2.4L12 0z" fill="#E0E0E0"/>
+    </svg>
+    <div class="s3-content">
+      <div class="s3-header">
+        <h2 class="s3-title">Problemas Críticos Identificados</h2>
+        <p class="s3-subtitle">Bloqueadores que impedem evolução e escala</p>
+      </div>
+      <div class="s3-problems">
+        <div class="s3-problem">
+          <div class="glass"></div>
+          <div class="s3-problem-icon">⏱️</div>
+          <h3 class="s3-problem-title">Timeouts Crônicos SQL</h3>
+          <p class="s3-problem-desc">Queries SQL sobre 63M contatos levam 45-60 min (timeout). Módulo Market One to One (70% do valor do contrato MC) não executa. Erro visível para dealers.</p>
+        </div>
+        <div class="s3-problem">
+          <div class="glass"></div>
+          <div class="s3-problem-icon">🔄</div>
+          <h3 class="s3-problem-title">DW DataCare — Hub Obrigatório</h3>
+          <p class="s3-problem-desc">TODAS as 10+ fontes passam pelo DW antes de qualquer consumo. Batch 24h. VUC presa dentro do DW — não acessível para ativação direta. Core recebe tudo indiscriminadamente.</p>
+        </div>
+        <div class="s3-problem">
+          <div class="glass"></div>
+          <div class="s3-problem-icon">⚠️</div>
+          <h3 class="s3-problem-title">Limite MC Connect Excedido (195%)</h3>
+          <p class="s3-problem-desc">350+ objetos sincronizados vs limite documentado de 180. Campanhas param quando novos objetos são adicionados. Jornadas com dados novos (telemetria, formulários) ficam bloqueadas.</p>
+        </div>
+        <div class="s3-problem">
+          <div class="glass"></div>
+          <div class="s3-problem-icon">👥</div>
+          <h3 class="s3-problem-title">Fragmentação de Identidade</h3>
+          <p class="s3-problem-desc">CPF não resolve tudo. Ownership não funciona quando cliente troca de dealer. VUC duplicada: lógica no DW + Identity Resolution parcial no DC. Sistema duplica histórico em vez de unificar.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 4: ARQUITETURA PROPOSTA -->
+  <div class="slide">
+    <div class="s4-bg"></div>
+    <!-- Sparkles -->
+    <svg class="sparkle red" style="left: 3%; top: 10%; width: 44px; height: 44px; animation-delay: 0.7s;" viewBox="0 0 24 24">
+      <path d="M12 0l2.4 9.6L24 12l-9.6 2.4L12 24l-2.4-9.6L0 12l9.6-2.4L12 0z" fill="#CC0000"/>
+    </svg>
+    <svg class="sparkle silver" style="right: 5%; top: 14%; width: 38px; height: 38px; animation-delay: 1.6s;" viewBox="0 0 24 24">
+      <path d="M12 0l2.4 9.6L24 12l-9.6 2.4L12 24l-2.4-9.6L0 12l9.6-2.4L12 0z" fill="#C0C0C0"/>
+    </svg>
+    <svg class="sparkle red" style="left: 6%; bottom: 15%; width: 32px; height: 32px; animation-delay: 2.3s;" viewBox="0 0 24 24">
+      <path d="M12 0l2.4 9.6L24 12l-9.6 2.4L12 24l-2.4-9.6L0 12l9.6-2.4L12 0z" fill="#CC0000"/>
+    </svg>
+    <div class="s4-content">
+      <div class="s4-header">
+        <h2 class="s4-title">Arquitetura Proposta — Cenário 2</h2>
+        <p class="s4-subtitle">Data Cloud como Hub Central • Ativação Direta • Writeback Seletivo</p>
+      </div>
+
+      <div class="arch-diagram">
+        <!-- LAYER 1: FONTES -->
+        <div class="arch-layer">
+          <div class="arch-box source">
+            <div class="arch-box-logo">🏍️</div>
+            <div class="arch-box-header">Fonte</div>
+            <div class="arch-box-title">Dealers 2w/4w</div>
+            <div class="arch-box-items">
+              • Clientes<br>
+              • Pedidos Venda<br>
+              • Ordens Serviço<br>
+              • Test-Drive
+            </div>
+          </div>
+          <div class="arch-box source">
+            <div class="arch-box-logo">🚗</div>
+            <div class="arch-box-header">Fonte</div>
+            <div class="arch-box-title">Vendas Especiais</div>
+            <div class="arch-box-items">
+              • Clientes<br>
+              • Pedidos Venda
+            </div>
+          </div>
+          <div class="arch-box source">
+            <div class="arch-box-logo">🏢</div>
+            <div class="arch-box-header">Fonte</div>
+            <div class="arch-box-title">HSF</div>
+            <div class="arch-box-items">
+              • Dealers<br>
+              • Fluxo Convivência<br>
+              • Clientes<br>
+              • Pedidos
+            </div>
+          </div>
+        </div>
+
+        <!-- ARROW -->
+        <div class="arch-arrow">
+          <svg viewBox="0 0 24 24"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg>
+        </div>
+
+        <!-- LAYER 2: ORQUESTRAÇÃO -->
+        <div class="arch-layer">
+          <div class="arch-box mulesoft" style="max-width: 600px;">
+            <div class="arch-box-logo">
+              <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+                <circle cx="16" cy="16" r="14" fill="#00A0DF"/>
+                <path d="M16 8L12 14H20L16 8Z" fill="white"/>
+                <path d="M16 24L20 18H12L16 24Z" fill="white"/>
+              </svg>
+            </div>
+            <div class="arch-box-header">Orquestração</div>
+            <div class="arch-box-title">ESB / MuleSoft</div>
+            <div class="arch-box-items">
+              Mantém protocolos legados: XML-SOAP, WSO2, JSON-REST, SAP-PI
+            </div>
+          </div>
+        </div>
+
+        <!-- ARROW -->
+        <div class="arch-arrow">
+          <svg viewBox="0 0 24 24"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg>
+        </div>
+
+        <!-- LAYER 3: DATA CLOUD HUB -->
+        <div class="arch-layer">
+          <div class="arch-box hub">
+            <div class="arch-box-logo">
+              <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
+                <path d="M20 8L28 14V26L20 32L12 26V14L20 8Z" fill="white" fill-opacity="0.9"/>
+                <circle cx="20" cy="20" r="4" fill="#9333EA"/>
+              </svg>
+            </div>
+            <div class="arch-box-header">⭐ HUB CENTRAL</div>
+            <div class="arch-box-title">DATA CLOUD</div>
+            <div class="arch-hub-stages">
+              <div class="arch-stage">
+                <div class="arch-stage-num">STAGE 1</div>
+                <div class="arch-stage-title">Data Streams</div>
+                <div class="arch-stage-desc">Ingestão<br>Real-time + Batch</div>
+              </div>
+              <div class="arch-stage">
+                <div class="arch-stage-num">STAGE 2</div>
+                <div class="arch-stage-title">Data Quality</div>
+                <div class="arch-stage-desc">Higienize<br>Padronize<br>Transform</div>
+              </div>
+              <div class="arch-stage">
+                <div class="arch-stage-num">STAGE 3</div>
+                <div class="arch-stage-title">Identity Resolution</div>
+                <div class="arch-stage-desc">VUC (regras DW)<br>Household<br>Pessoa Física</div>
+              </div>
+              <div class="arch-stage">
+                <div class="arch-stage-num">STAGE 4</div>
+                <div class="arch-stage-title">Unified Profile</div>
+                <div class="arch-stage-desc">Substitui VUC DW<br>13+ entidades<br>conectadas</div>
+              </div>
+              <div class="arch-stage">
+                <div class="arch-stage-num">STAGE 5</div>
+                <div class="arch-stage-title">Segmentação</div>
+                <div class="arch-stage-desc">Drag & drop<br>Calculated Insights<br>Einstein Scoring</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ARROW -->
+        <div class="arch-arrow">
+          <svg viewBox="0 0 24 24"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg>
+        </div>
+
+        <!-- LAYER 4: DESTINOS (3 PARALELOS) -->
+        <div class="arch-layer">
+          <div class="arch-box marketing" style="flex: 1;">
+            <div class="arch-box-logo">
+              <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+                <rect x="6" y="6" width="20" height="20" rx="4" fill="#FF5C35"/>
+                <path d="M16 12L19 18H13L16 12Z" fill="white"/>
+                <circle cx="16" cy="22" r="1.5" fill="white"/>
+              </svg>
+            </div>
+            <div class="arch-box-header">Destino 1</div>
+            <div class="arch-box-title">Activation Targets</div>
+            <div class="arch-box-items">
+              • MC Email<br>
+              • MC SMS<br>
+              • WhatsApp<br>
+              • Push Notification<br>
+              • Agent Force
+            </div>
+            <div class="arch-note">Direto, sem passar Core</div>
+          </div>
+          <div class="arch-box sales" style="flex: 1;">
+            <div class="arch-box-logo">
+              <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+                <circle cx="16" cy="16" r="12" fill="#00A1E0"/>
+                <path d="M16 10V22M10 16H22" stroke="white" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <div class="arch-box-header">Destino 2</div>
+            <div class="arch-box-title">CRM Writeback</div>
+            <div class="arch-box-items">
+              Core recebe só:<br>
+              • Oportunidades<br>
+              • Cases<br>
+              • Accounts core
+            </div>
+            <div class="arch-note">Seletivo — Não carrega tudo!</div>
+          </div>
+          <div class="arch-box databricks" style="flex: 1;">
+            <div class="arch-box-logo">
+              <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+                <rect x="8" y="8" width="16" height="16" rx="2" fill="#FF3621"/>
+                <path d="M12 12H20M12 16H20M12 20H20" stroke="white" stroke-width="1.5"/>
+              </svg>
+            </div>
+            <div class="arch-box-header">Destino 3</div>
+            <div class="arch-box-title">Data Lake</div>
+            <div class="arch-box-items">
+              • Histórico full<br>
+              • Analytics<br>
+              • BI (Qlik)<br>
+              • Dados corp.<br>
+              • ML/AI
+            </div>
+            <div class="arch-note">Databricks (Produção)</div>
+          </div>
+        </div>
+
+        <!-- ARROW (só do meio - writeback) -->
+        <div class="arch-arrow">
+          <svg viewBox="0 0 24 24"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg>
+        </div>
+
+        <!-- LAYER 5: CORE -->
+        <div class="arch-layer">
+          <div class="arch-box sales" style="max-width: 500px;">
+            <div class="arch-box-logo">
+              <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+                <circle cx="16" cy="16" r="12" fill="#00A1E0"/>
+                <path d="M12 16L15 19L20 13" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <div class="arch-box-header">Transacional</div>
+            <div class="arch-box-title">Salesforce Core</div>
+            <div class="arch-box-items">
+              Leve, sem VUC • Apenas: Oportunidades, Cases, Accounts mínimo
+            </div>
+            <div class="arch-note">Leve, sem sobrecarregar</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 5: ROADMAP -->
+  <div class="slide">
+    <div class="s5-bg"></div>
+    <!-- Sparkles -->
+    <svg class="sparkle silver" style="left: 4%; top: 12%; width: 40px; height: 40px; animation-delay: 0.9s;" viewBox="0 0 24 24">
+      <path d="M12 0l2.4 9.6L24 12l-9.6 2.4L12 24l-2.4-9.6L0 12l9.6-2.4L12 0z" fill="#C0C0C0"/>
+    </svg>
+    <svg class="sparkle red" style="right: 6%; top: 16%; width: 36px; height: 36px; animation-delay: 1.8s;" viewBox="0 0 24 24">
+      <path d="M12 0l2.4 9.6L24 12l-9.6 2.4L12 24l-2.4-9.6L0 12l9.6-2.4L12 0z" fill="#CC0000"/>
+    </svg>
+    <div class="s5-content">
+      <div class="s5-header">
+        <h2 class="s5-title">Roadmap Executivo</h2>
+        <p class="s5-subtitle">6 Ondas de Migração • Descomissionamento Gradual do DW • Critérios de Saída por Onda</p>
+      </div>
+      <div class="s5-timeline">
+        <div class="s5-phase">
+          <div class="glass"></div>
+          <div class="s5-phase-number">ONDA 1</div>
+          <h3 class="s5-phase-title">Discovery</h3>
+          <div class="s5-phase-duration">Critério de Saída</div>
+          <div class="s5-phase-items">
+            • Mapear 100% regras DW<br>
+            • Validar Data Lake (Databricks)<br>
+            • Dimensionar consumo créditos<br>
+            • Inventário completo concluído
+          </div>
+        </div>
+        <div class="s5-phase">
+          <div class="glass"></div>
+          <div class="s5-phase-number">ONDA 2</div>
+          <h3 class="s5-phase-title">Quick Win</h3>
+          <div class="s5-phase-duration">Critério de Saída</div>
+          <div class="s5-phase-items">
+            • Resolver timeouts (piloto)<br>
+            • Segmentação < 5 min<br>
+            • Dealers conseguem segmentar<br>
+            • Timeout eliminado
+          </div>
+        </div>
+        <div class="s5-phase">
+          <div class="glass"></div>
+          <div class="s5-phase-number">ONDA 3</div>
+          <h3 class="s5-phase-title">Identity Resolution</h3>
+          <div class="s5-phase-duration">Critério de Saída</div>
+          <div class="s5-phase-items">
+            • Migrar VUC → Unified Profile<br>
+            • Match rate validado<br>
+            • Sistema estável<br>
+            • Identity Resolution ativa
+          </div>
+        </div>
+        <div class="s5-phase">
+          <div class="glass"></div>
+          <div class="s5-phase-number">ONDA 4</div>
+          <h3 class="s5-phase-title">Ativação Direta</h3>
+          <div class="s5-phase-duration">Critério de Saída</div>
+          <div class="s5-phase-items">
+            • WhatsApp operando<br>
+            • Push Notification ativo<br>
+            • Agent Force integrado<br>
+            • Novos canais em produção
+          </div>
+        </div>
+        <div class="s5-phase">
+          <div class="glass"></div>
+          <div class="s5-phase-number">ONDA 5</div>
+          <h3 class="s5-phase-title">Rollout Dealers</h3>
+          <div class="s5-phase-duration">Critério de Saída</div>
+          <div class="s5-phase-items">
+            • Escalar piloto → 1.000 dealers<br>
+            • Todos dealers migrados<br>
+            • Sistema estável<br>
+            • Totalidade operando
+          </div>
+        </div>
+        <div class="s5-phase">
+          <div class="glass"></div>
+          <div class="s5-phase-number">ONDA 6</div>
+          <h3 class="s5-phase-title">Descomissionamento</h3>
+          <div class="s5-phase-duration">Critério de Saída</div>
+          <div class="s5-phase-items">
+            • DW desligado<br>
+            • DMS → DC/Lake direto<br>
+            • Migração completa<br>
+            • DW offline sem impacto
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 6: BENEFÍCIOS -->
+  <div class="slide">
+    <div class="s6-bg"></div>
+    <!-- Sparkles -->
+    <svg class="sparkle red" style="left: 5%; top: 14%; width: 42px; height: 42px; animation-delay: 0.4s;" viewBox="0 0 24 24">
+      <path d="M12 0l2.4 9.6L24 12l-9.6 2.4L12 24l-2.4-9.6L0 12l9.6-2.4L12 0z" fill="#CC0000"/>
+    </svg>
+    <svg class="sparkle silver" style="right: 7%; top: 18%; width: 38px; height: 38px; animation-delay: 1.3s;" viewBox="0 0 24 24">
+      <path d="M12 0l2.4 9.6L24 12l-9.6 2.4L12 24l-2.4-9.6L0 12l9.6-2.4L12 0z" fill="#E0E0E0"/>
+    </svg>
+    <svg class="sparkle red" style="left: 7%; bottom: 22%; width: 34px; height: 34px; animation-delay: 2.5s;" viewBox="0 0 24 24">
+      <path d="M12 0l2.4 9.6L24 12l-9.6 2.4L12 24l-2.4-9.6L0 12l9.6-2.4L12 0z" fill="#CC0000"/>
+    </svg>
+    <div class="s6-content">
+      <div class="s6-header">
+        <h2 class="s6-title">Benefícios Mensuráveis</h2>
+        <p class="s6-subtitle">Impactos quantificáveis da transformação</p>
+      </div>
+      <div class="s6-grid">
+        <div class="s6-benefit">
+          <div class="s6-benefit-value">~95%</div>
+          <div class="s6-benefit-label">Latência reduzida<br>(Batch 24h → Real-time)</div>
+        </div>
+        <div class="s6-benefit">
+          <div class="s6-benefit-value">~90%</div>
+          <div class="s6-benefit-label">Tempo segmentação<br>(45-60 min → 2-5 min)</div>
+        </div>
+        <div class="s6-benefit">
+          <div class="s6-benefit-value">~85%</div>
+          <div class="s6-benefit-label">Objetos Core reduzidos<br>(350+ → ~50 seletivo)</div>
+        </div>
+        <div class="s6-benefit">
+          <div class="s6-benefit-value">100%</div>
+          <div class="s6-benefit-label">Timeouts eliminados<br>(antes crônico)</div>
+        </div>
+        <div class="s6-benefit">
+          <div class="s6-benefit-value">+2</div>
+          <div class="s6-benefit-label">Novos canais dealers<br>(WhatsApp + Push)</div>
+        </div>
+        <div class="s6-benefit">
+          <div class="s6-benefit-value">Zero</div>
+          <div class="s6-benefit-label">Duplicação identidade<br>(VUC única no DC)</div>
+        </div>
+        <div class="s6-benefit">
+          <div class="s6-benefit-value">+80%</div>
+          <div class="s6-benefit-label">Autonomia CRM<br>(self-service)</div>
+        </div>
+        <div class="s6-benefit">
+          <div class="s6-benefit-value">Gradual</div>
+          <div class="s6-benefit-label">Descomissiona DW<br>(6 ondas validadas)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 7: PRÓXIMOS PASSOS -->
+  <div class="slide">
+    <div class="s7-bg"></div>
+    <!-- Sparkles -->
+    <svg class="sparkle silver" style="left: 6%; top: 18%; width: 46px; height: 46px; animation-delay: 0.6s;" viewBox="0 0 24 24">
+      <path d="M12 0l2.4 9.6L24 12l-9.6 2.4L12 24l-2.4-9.6L0 12l9.6-2.4L12 0z" fill="#FFFFFF" opacity="0.7"/>
+    </svg>
+    <svg class="sparkle silver" style="right: 8%; top: 20%; width: 40px; height: 40px; animation-delay: 1.7s;" viewBox="0 0 24 24">
+      <path d="M12 0l2.4 9.6L24 12l-9.6 2.4L12 24l-2.4-9.6L0 12l9.6-2.4L12 0z" fill="#FFFFFF" opacity="0.6"/>
+    </svg>
+    <svg class="sparkle silver" style="left: 9%; bottom: 24%; width: 36px; height: 36px; animation-delay: 2.4s;" viewBox="0 0 24 24">
+      <path d="M12 0l2.4 9.6L24 12l-9.6 2.4L12 24l-2.4-9.6L0 12l9.6-2.4L12 0z" fill="#FFFFFF" opacity="0.5"/>
+    </svg>
+    <div class="s7-content">
+      <h2 class="s7-title">Princípios de Design</h2>
+      <div class="s7-steps">
+        <div class="s7-step">
+          <div class="glass"></div>
+          <h3 class="s7-step-title">1. Ativar, não carregar</h3>
+          <p class="s7-step-desc">Core leve e transacional. Ativação direta do Data Cloud para canais (Email, SMS, WhatsApp, Push, Agent Force) — sem passar pelo Core.</p>
+        </div>
+        <div class="s7-step">
+          <div class="glass"></div>
+          <h3 class="s7-step-title">2. Substituição gradual</h3>
+          <p class="s7-step-desc">DW descomissionado por tipo de dado, em ondas sucessivas, com execução paralela durante transição. Fallback preservado.</p>
+        </div>
+        <div class="s7-step">
+          <div class="glass"></div>
+          <h3 class="s7-step-title">3. Data Lake para histórico</h3>
+          <p class="s7-step-desc">Dados corporativos não-CRM, analytics pesado e histórico completo vão para Databricks (já em produção) — não para Data Cloud.</p>
+        </div>
+        <div class="s7-step">
+          <div class="glass"></div>
+          <h3 class="s7-step-title">4. VUC → Unified Profile</h3>
+          <p class="s7-step-desc">Identity Resolution não duplicada. Unified Profile do Data Cloud substitui VUC — não convive com ela. Lógica única.</p>
+        </div>
+        <div class="s7-step">
+          <div class="glass"></div>
+          <h3 class="s7-step-title">5. Segmentação sem SQL</h3>
+          <p class="s7-step-desc">Se uma jornada migrada ainda depende de query SQL pesada, a migração não cumpriu objetivo — apenas trocou plataforma do timeout.</p>
+        </div>
+        <div class="s7-step">
+          <div class="glass"></div>
+          <h3 class="s7-step-title">6. Writeback seletivo</h3>
+          <p class="s7-step-desc">Core recebe apenas o que precisa para operações transacionais. Evita recriar problema do limite MC Connect no novo cenário.</p>
+        </div>
+      </div>
+      <div class="s7-cta">
+        Enterprise Architecture POV • Substituição DW por Data Cloud • Sem Recriar Anti-Padrão
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  // CURSOR
+  const cursor = document.querySelector('.cursor');
+  let mouseX = 0, mouseY = 0;
+  let cursorX = 0, cursorY = 0;
+
+  document.addEventListener('mousemove', (e) => {
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+  });
+
+  function animateCursor() {
+    const dx = mouseX - cursorX;
+    const dy = mouseY - cursorY;
+    cursorX += dx * 0.15;
+    cursorY += dy * 0.15;
+    cursor.style.left = cursorX + 'px';
+    cursor.style.top = cursorY + 'px';
+    requestAnimationFrame(animateCursor);
+  }
+  animateCursor();
+
+  document.querySelectorAll('a, button, .nav-btn, .dot, .s2-card, .s3-problem, .s5-phase, .s6-benefit, .s7-step').forEach(el => {
+    el.addEventListener('mouseenter', () => cursor.classList.add('big'));
+    el.addEventListener('mouseleave', () => cursor.classList.remove('big'));
+  });
+
+  // NAVEGAÇÃO
+  let current = 0;
+  const slides = document.querySelectorAll('.slide');
+  const dots = document.querySelectorAll('.dot');
+  const total = slides.length;
+  const progress = document.getElementById('progress');
+  const counter = document.getElementById('counter');
+
+  function goto(n) {
+    if (n < 0 || n >= total) return;
+
+    slides[current].classList.remove('active');
+    current = n;
+    slides[current].classList.add('active');
+
+    dots.forEach((d, i) => d.classList.toggle('active', i === current));
+    progress.style.width = ((current + 1) / total * 100) + '%';
+    counter.textContent = String(current + 1).padStart(2, '0') + ' / ' + String(total).padStart(2, '0');
+  }
+
+  document.getElementById('nav-next').addEventListener('click', () => goto(current + 1));
+  document.getElementById('nav-prev').addEventListener('click', () => goto(current - 1));
+  dots.forEach((dot, i) => dot.addEventListener('click', () => goto(i)));
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight' || e.key === ' ') goto(current + 1);
+    if (e.key === 'ArrowLeft') goto(current - 1);
+  });
+
+  // INIT
+  progress.style.width = (1 / total * 100) + '%';
+</script>
+
+</body>
+</html>

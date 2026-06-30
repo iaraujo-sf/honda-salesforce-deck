@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Honda Test - Responsive</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+    background: #1a1a1a;
+    color: white;
+    overflow: hidden;
+  }
+
+  .slide {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .content {
+    width: 85vw;
+    max-width: 1400px;
+    height: 90vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 2vh;
+  }
+
+  .header {
+    text-align: center;
+    flex-shrink: 0;
+  }
+
+  .title {
+    font-size: clamp(24px, 3.5vw, 48px);
+    font-weight: 800;
+    margin-bottom: 1vh;
+  }
+
+  .subtitle {
+    font-size: clamp(12px, 1.2vw, 16px);
+    opacity: 0.7;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
+    gap: clamp(12px, 1.5vw, 24px);
+    flex: 1;
+    align-content: center;
+  }
+
+  .card {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 12px;
+    padding: clamp(16px, 2vh, 32px);
+    display: flex;
+    flex-direction: column;
+    gap: clamp(8px, 1vh, 16px);
+  }
+
+  .card-label {
+    font-size: clamp(9px, 0.8vw, 11px);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #CC0000;
+    font-weight: 700;
+  }
+
+  .card-value {
+    font-size: clamp(20px, 2.4vw, 36px);
+    font-weight: 800;
+    line-height: 1.15;
+  }
+
+  .card-desc {
+    font-size: clamp(11px, 1vw, 14px);
+    line-height: 1.4;
+    opacity: 0.8;
+  }
+
+  .debug {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    background: rgba(0,0,0,0.8);
+    padding: 10px;
+    font-size: 11px;
+    font-family: monospace;
+    border-radius: 4px;
+    z-index: 1000;
+  }
+</style>
+</head>
+<body>
+
+<div class="debug">
+  <div>Viewport: <span id="vw"></span> x <span id="vh"></span></div>
+  <div>Card height: <span id="ch"></span>px</div>
+</div>
+
+<div class="slide">
+  <div class="content">
+    <div class="header">
+      <div class="title">Problemas Críticos Identificados</div>
+      <div class="subtitle">Bloqueadores que impedem evolução e escala</div>
+    </div>
+
+    <div class="grid" id="grid">
+      <div class="card">
+        <div class="card-label">Problema 1</div>
+        <div class="card-value">Timeouts SQL</div>
+        <div class="card-desc">Queries SQL sobre 63M contatos levam 45-60 min (timeout). Módulo Market One to One não executa.</div>
+      </div>
+
+      <div class="card">
+        <div class="card-label">Problema 2</div>
+        <div class="card-value">DW Hub</div>
+        <div class="card-desc">TODAS as 10+ fontes passam pelo DW antes de qualquer consumo. Batch 24h. VUC presa dentro do DW.</div>
+      </div>
+
+      <div class="card">
+        <div class="card-label">Problema 3</div>
+        <div class="card-value">MC Connect</div>
+        <div class="card-desc">350+ objetos sincronizados vs limite documentado de 180. Campanhas param quando novos objetos são adicionados.</div>
+      </div>
+
+      <div class="card">
+        <div class="card-label">Problema 4</div>
+        <div class="card-value">Identidade</div>
+        <div class="card-desc">CPF não resolve tudo. Ownership não funciona quando cliente troca de dealer. VUC duplicada.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function updateDebug() {
+    document.getElementById('vw').textContent = window.innerWidth;
+    document.getElementById('vh').textContent = window.innerHeight;
+    const card = document.querySelector('.card');
+    if (card) {
+      document.getElementById('ch').textContent = card.offsetHeight;
+    }
+  }
+  window.addEventListener('resize', updateDebug);
+  updateDebug();
+</script>
+
+</body>
+</html>
